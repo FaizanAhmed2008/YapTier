@@ -1175,8 +1175,6 @@ p {
   width: 34px;
   height: 34px;
   object-fit: contain;
-  filter: invert(1) brightness(1.8);
-  opacity: 0.9;
 }
 
 .icon-result-name {

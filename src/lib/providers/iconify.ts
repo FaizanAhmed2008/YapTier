@@ -5,6 +5,7 @@ import { IconSearchError } from './types';
 const ICONIFY_API_BASE = 'https://api.iconify.design';
 const SEARCH_LIMIT = 72;
 const PREVIEW_HEIGHT = 96;
+const PREVIEW_COLOR = '#e8ecf8';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -45,7 +46,7 @@ export function buildIconifySvgUrl(fullName: string, height = PREVIEW_HEIGHT): s
   const prefix = fullName.slice(0, separator);
   const name = fullName.slice(separator + 1);
 
-  return `${ICONIFY_API_BASE}/${encodeURIComponent(prefix)}/${encodeURIComponent(name)}.svg?height=${height}`;
+  return `${ICONIFY_API_BASE}/${encodeURIComponent(prefix)}/${encodeURIComponent(name)}.svg?height=${height}&color=${encodeURIComponent(PREVIEW_COLOR)}`;
 }
 
 export function parseIconifySearchResponse(payload: unknown): IconSearchResult {

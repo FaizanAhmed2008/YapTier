@@ -92,6 +92,7 @@ export function ImageCollection({
             type="file"
             accept={FILE_INPUT_ACCEPT}
             multiple
+            tabIndex={-1}
             aria-label="Upload images"
             onChange={handleFileSelection}
           />

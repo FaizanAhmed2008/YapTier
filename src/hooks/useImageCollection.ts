@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { stripFileExtension } from '../lib/format';
+import { humanizeIconName, stripFileExtension } from '../lib/format';
 import { createId } from '../lib/ids';
 import { validateImageFile } from '../lib/images';
 import type { CollectionImage, UploadRejection } from '../types';
@@ -78,7 +78,7 @@ export function useImageCollection() {
     (icon: IconSummary): CollectionImage => {
       const image: CollectionImage = {
         id: createId('icon'),
-        name: stripFileExtension(icon.name.replace(/[-_]+/g, ' ')),
+        name: humanizeIconName(icon.name),
         src: icon.svgUrl,
         source: 'icon',
         isObjectUrl: false,
