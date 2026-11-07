@@ -1,28 +1,67 @@
+import { useRef, useState } from 'react';
+import type { ChangeEvent } from 'react';
 import { AppHeader } from './components/AppHeader';
-import { ImageCollection } from './components/ImageCollection';
-import { Workspace } from './components/Workspace';
-import { useImageCollection } from './hooks/useImageCollection';
+import { FindIconsDialog } from './components/FindIconsDialog';
+import { TierEditor } from './components/TierEditor';
+import { UploadNotice } from './components/UploadNotice';
+import { useTierEditor } from './hooks/useTierEditor';
+import { FILE_INPUT_ACCEPT } from './lib/images';
+import type { UploadRejection } from './types';
 
 export default function App() {
-  const { images, addFiles, addIcon, removeImage } = useImageCollection();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [rejections, setRejections] = useState<UploadRejection[]>([]);
+  const [isFinderOpen, setIsFinderOpen] = useState(false);
+  const {
+    board,
+    addFiles,
+    addIcon,
+    moveItem,
+    returnToCollection,
+    removeImage,
+  } = useTierEditor();
+
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files ? Array.from(event.target.files) : [];
+    if (files.length > 0) {
+      setRejections(addFiles(files));
+    }
+    event.target.value = '';
+  };
 
   return (
-    <div className="app-shell">
-      <div className="app-glow" aria-hidden="true" />
-      <AppHeader />
+    <div className="app">
+      <AppHeader
+        onUpload={() => fileInputRef.current?.click()}
+        onFindIcons={() => setIsFinderOpen(true)}
+      />
+
       <main className="app-main">
-        <Workspace imageCount={images.length} />
-        <ImageCollection
-          images={images}
-          onAddFiles={addFiles}
-          onAddIcon={addIcon}
-          onRemoveImage={removeImage}
+        <UploadNotice rejections={rejections} onDismiss={() => setRejections([])} />
+        <TierEditor
+          board={board}
+          onMove={moveItem}
+          onRemove={removeImage}
+          onReturn={returnToCollection}
         />
       </main>
-      <footer className="app-footer">
-        <span>YapTier · Rank everything. Yap about anything.</span>
-        <span>Local-only editor · No account, no database</span>
-      </footer>
+
+      <input
+        ref={fileInputRef}
+        className="visually-hidden"
+        type="file"
+        accept={FILE_INPUT_ACCEPT}
+        aria-label="Upload images"
+        multiple
+        onChange={handleFileChange}
+        tabIndex={-1}
+      />
+
+      <FindIconsDialog
+        open={isFinderOpen}
+        onClose={() => setIsFinderOpen(false)}
+        onSelect={addIcon}
+      />
     </div>
   );
 }

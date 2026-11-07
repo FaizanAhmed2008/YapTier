@@ -72,7 +72,6 @@ describe('FindIconsDialog', () => {
       collectionName: 'Material Design Icons',
       license: { title: 'Apache 2.0' },
     });
-    expect(screen.getByText('Added to collection')).toBeInTheDocument();
   });
 
   it('shows an empty state when no icons match', async () => {

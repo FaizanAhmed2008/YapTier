@@ -1,4 +1,11 @@
-export function AppHeader() {
+import { SearchGlyph, UploadGlyph } from './Glyphs';
+
+interface AppHeaderProps {
+  onUpload: () => void;
+  onFindIcons: () => void;
+}
+
+export function AppHeader({ onUpload, onFindIcons }: AppHeaderProps) {
   return (
     <header className="app-header">
       <div className="brand">
@@ -7,17 +14,20 @@ export function AppHeader() {
           <span />
           <span />
         </span>
-        <div className="brand-copy">
-          <p className="brand-name">
-            Yap<span>Tier</span>
-          </p>
-          <p className="brand-tagline">Rank everything. Yap about anything.</p>
-        </div>
+        <p className="brand-name">
+          Yap<span>Tier</span>
+        </p>
       </div>
-      <span className="sprint-badge">
-        <span className="status-dot" aria-hidden="true" />
-        Editor · Sprint 1
-      </span>
+      <div className="header-actions">
+        <button type="button" className="button button-secondary" onClick={onUpload}>
+          <UploadGlyph />
+          Upload
+        </button>
+        <button type="button" className="button button-primary" onClick={onFindIcons}>
+          <SearchGlyph />
+          Find Icons
+        </button>
+      </div>
     </header>
   );
 }

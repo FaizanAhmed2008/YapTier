@@ -18,13 +18,12 @@ describe('App image collection', () => {
 
     fireEvent.change(input, { target: { files: [file] } });
 
-    expect(await screen.findByAltText('cat')).toBeInTheDocument();
-    expect(screen.getByText('Local preview')).toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: 'cat' })).toBeInTheDocument();
     expect(objectUrls.createObjectURL).toHaveBeenCalledWith(file);
 
     fireEvent.click(screen.getByRole('button', { name: 'Remove cat' }));
 
-    expect(screen.queryByAltText('cat')).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'cat' })).not.toBeInTheDocument();
     expect(objectUrls.revokeObjectURL).toHaveBeenCalledWith('blob:mock-1');
   });
 
@@ -37,14 +36,14 @@ describe('App image collection', () => {
 
     fireEvent.change(input, { target: { files: [gif, png] } });
 
-    expect(screen.getByRole('alert')).toHaveTextContent('1 file was skipped.');
+    expect(screen.getByRole('alert')).toHaveTextContent('1 file could not be added.');
     expect(screen.getByRole('alert')).toHaveTextContent('loop.gif');
-    expect(screen.getByAltText('photo')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'photo' })).toBeInTheDocument();
     expect(objectUrls.createObjectURL).toHaveBeenCalledTimes(1);
     expect(objectUrls.createObjectURL).toHaveBeenCalledWith(png);
   });
 
-  it('dismisses upload errors', () => {
+  it('dismisses upload warnings', () => {
     render(<App />);
 
     const input = screen.getByLabelText('Upload images');
@@ -53,7 +52,7 @@ describe('App image collection', () => {
     });
 
     expect(screen.getByRole('alert')).toBeInTheDocument();
-    fireEvent.click(screen.getByRole('button', { name: 'Dismiss upload errors' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Dismiss upload warning' }));
     expect(screen.queryByRole('alert')).not.toBeInTheDocument();
   });
 });

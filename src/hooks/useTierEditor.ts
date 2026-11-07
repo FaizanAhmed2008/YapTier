@@ -1,18 +1,28 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import {
+  createEmptyBoard,
+  findItem,
+  getAllImages,
+  removeItemFromBoard,
+  resolveDrop,
+  returnItemToCollection,
+} from '../lib/board';
+import type { TierBoardState } from '../lib/board';
 import { humanizeIconName, stripFileExtension } from '../lib/format';
 import { createId } from '../lib/ids';
 import { validateImageFile } from '../lib/images';
-import type { CollectionImage, UploadRejection } from '../types';
 import type { IconSummary } from '../lib/providers/types';
+import type { CollectionImage, UploadRejection } from '../types';
 
-export function useImageCollection() {
-  const [images, setImages] = useState<CollectionImage[]>([]);
-  const imagesRef = useRef<CollectionImage[]>([]);
+export function useTierEditor() {
+  const [board, setBoard] = useState<TierBoardState>(createEmptyBoard);
+  const boardRef = useRef<TierBoardState>(board);
   const objectUrlsRef = useRef<Set<string>>(new Set());
 
-  useEffect(() => {
-    imagesRef.current = images;
-  }, [images]);
+  const commitBoard = useCallback((nextBoard: TierBoardState) => {
+    boardRef.current = nextBoard;
+    setBoard(nextBoard);
+  }, []);
 
   useEffect(() => {
     const objectUrls = objectUrlsRef.current;
@@ -21,11 +31,6 @@ export function useImageCollection() {
       objectUrls.forEach((url) => URL.revokeObjectURL(url));
       objectUrls.clear();
     };
-  }, []);
-
-  const commitImages = useCallback((nextImages: CollectionImage[]) => {
-    imagesRef.current = nextImages;
-    setImages(nextImages);
   }, []);
 
   const addFiles = useCallback(
@@ -66,12 +71,15 @@ export function useImageCollection() {
       }
 
       if (accepted.length > 0) {
-        commitImages([...imagesRef.current, ...accepted]);
+        commitBoard({
+          ...boardRef.current,
+          collection: [...boardRef.current.collection, ...accepted],
+        });
       }
 
       return rejected;
     },
-    [commitImages],
+    [commitBoard],
   );
 
   const addIcon = useCallback(
@@ -98,25 +106,55 @@ export function useImageCollection() {
         },
       };
 
-      commitImages([...imagesRef.current, image]);
+      commitBoard({
+        ...boardRef.current,
+        collection: [...boardRef.current.collection, image],
+      });
       return image;
     },
-    [commitImages],
+    [commitBoard],
+  );
+
+  const moveItem = useCallback(
+    (activeId: string, overId: string) => {
+      commitBoard(resolveDrop(boardRef.current, activeId, overId));
+    },
+    [commitBoard],
+  );
+
+  const returnToCollection = useCallback(
+    (itemId: string) => {
+      commitBoard(returnItemToCollection(boardRef.current, itemId));
+    },
+    [commitBoard],
   );
 
   const removeImage = useCallback(
-    (id: string) => {
-      const target = imagesRef.current.find((image) => image.id === id);
-
-      if (target?.isObjectUrl && objectUrlsRef.current.has(target.src)) {
-        URL.revokeObjectURL(target.src);
-        objectUrlsRef.current.delete(target.src);
+    (itemId: string) => {
+      const item = findItem(boardRef.current, itemId);
+      if (!item) {
+        return;
       }
 
-      commitImages(imagesRef.current.filter((image) => image.id !== id));
+      if (item.isObjectUrl && objectUrlsRef.current.has(item.src)) {
+        URL.revokeObjectURL(item.src);
+        objectUrlsRef.current.delete(item.src);
+      }
+
+      commitBoard(removeItemFromBoard(boardRef.current, itemId));
     },
-    [commitImages],
+    [commitBoard],
   );
 
-  return { images, addFiles, addIcon, removeImage };
+  return {
+    board,
+    collection: board.collection,
+    tiers: board.tiers,
+    totalCount: getAllImages(board).length,
+    addFiles,
+    addIcon,
+    moveItem,
+    returnToCollection,
+    removeImage,
+  };
 }

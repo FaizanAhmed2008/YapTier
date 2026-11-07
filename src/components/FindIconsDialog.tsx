@@ -31,7 +31,6 @@ export function FindIconsDialog({ open, onClose, onSelect }: FindIconsDialogProp
   const titleId = useId();
   const searchId = useId();
   const [query, setQuery] = useState('');
-  const [lastAddedId, setLastAddedId] = useState<string | null>(null);
   const { status, icons, total, error, isDebouncing, retry } = useIconSearch(query);
 
   const trimmedQuery = query.trim();
@@ -71,22 +70,11 @@ export function FindIconsDialog({ open, onClose, onSelect }: FindIconsDialogProp
   useEffect(() => {
     if (!open) {
       setQuery('');
-      setLastAddedId(null);
     }
   }, [open]);
 
-  useEffect(() => {
-    if (!lastAddedId) {
-      return;
-    }
-
-    const timeoutId = window.setTimeout(() => setLastAddedId(null), 2200);
-    return () => window.clearTimeout(timeoutId);
-  }, [lastAddedId]);
-
   const handleSelect = (icon: IconSummary) => {
     onSelect(icon);
-    setLastAddedId(icon.id);
   };
 
   const handleBackdropClick = (event: MouseEvent<HTMLDialogElement>) => {
@@ -117,10 +105,10 @@ export function FindIconsDialog({ open, onClose, onSelect }: FindIconsDialogProp
               <SparklesGlyph />
             </span>
             <div>
-              <p className="eyebrow">Iconify search</p>
+              <p className="eyebrow">Open icons</p>
               <h2 id={titleId}>Find Icons</h2>
               <p className="finder-subtitle">
-                Search open icon collections and add a ready-made SVG to your board.
+                Search open icon collections and add one to your board.
               </p>
             </div>
           </div>
@@ -161,8 +149,8 @@ export function FindIconsDialog({ open, onClose, onSelect }: FindIconsDialogProp
               </span>
               <h3>What are you looking for?</h3>
               <p>
-                Search thousands of open icons by keyword. Every result shows its collection and
-                license before you add it.
+                Search open icons by keyword. Each result shows its collection and license before
+                you add it.
               </p>
               <div className="suggestion-row">
                 {SUGGESTED_TERMS.map((term) => (
@@ -222,18 +210,10 @@ export function FindIconsDialog({ open, onClose, onSelect }: FindIconsDialogProp
                     ? `Showing ${icons.length} of ${total} matches`
                     : `${pluralize(total, 'icon')} found`}
                 </p>
-                {lastAddedId && (
-                  <span className="added-feedback" role="status">
-                    Added to collection
-                  </span>
-                )}
               </div>
               <ul className="icon-grid" aria-label="Icon search results">
                 {icons.map((icon) => (
-                  <li
-                    key={icon.id}
-                    className={`icon-result-item${lastAddedId === icon.id ? ' is-added' : ''}`}
-                  >
+                  <li key={icon.id} className="icon-result-item">
                     <button
                       type="button"
                       className="icon-result"
