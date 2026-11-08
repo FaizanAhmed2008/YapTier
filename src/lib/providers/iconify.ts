@@ -6,6 +6,7 @@ const ICONIFY_API_BASE = 'https://api.iconify.design';
 const SEARCH_LIMIT = 72;
 const PREVIEW_HEIGHT = 96;
 const PREVIEW_COLOR = '#e8ecf8';
+const PREVIEW_BATCH_CONCURRENCY = 4;
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -36,6 +37,48 @@ function isAbortError(error: unknown): boolean {
   return error instanceof DOMException && error.name === 'AbortError';
 }
 
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function groupIconsByPrefix(icons: readonly IconSummary[]): Map<string, IconSummary[]> {
+  const groups = new Map<string, IconSummary[]>();
+
+  for (const icon of icons) {
+    const group = groups.get(icon.prefix);
+    if (group) {
+      group.push(icon);
+    } else {
+      groups.set(icon.prefix, [icon]);
+    }
+  }
+
+  return groups;
+}
+
+async function mapWithConcurrency<T, R>(
+  items: readonly T[],
+  concurrency: number,
+  mapper: (item: T) => Promise<R>,
+): Promise<R[]> {
+  const results = new Array<R>(items.length);
+  let nextIndex = 0;
+
+  const workers = Array.from(
+    { length: Math.min(concurrency, items.length) },
+    async () => {
+      while (nextIndex < items.length) {
+        const index = nextIndex;
+        nextIndex += 1;
+        results[index] = await mapper(items[index]);
+      }
+    },
+  );
+
+  await Promise.all(workers);
+  return results;
+}
+
 export function buildIconifySvgUrl(fullName: string, height = PREVIEW_HEIGHT): string {
   const separator = fullName.indexOf(':');
 
@@ -47,6 +90,89 @@ export function buildIconifySvgUrl(fullName: string, height = PREVIEW_HEIGHT): s
   const name = fullName.slice(separator + 1);
 
   return `${ICONIFY_API_BASE}/${encodeURIComponent(prefix)}/${encodeURIComponent(name)}.svg?height=${height}&color=${encodeURIComponent(PREVIEW_COLOR)}`;
+}
+
+export function buildIconifyCssUrl(
+  prefix: string,
+  names: readonly string[],
+  height = PREVIEW_HEIGHT,
+): string {
+  const icons = names.map((name) => encodeURIComponent(name)).join(',');
+
+  return `${ICONIFY_API_BASE}/${encodeURIComponent(prefix)}.css?icons=${icons}&height=${height}&color=${encodeURIComponent(PREVIEW_COLOR)}`;
+}
+
+export function parseIconifyCssPreviews(
+  prefix: string,
+  css: string,
+  names: readonly string[],
+): Map<string, string> {
+  const previews = new Map<string, string>();
+
+  for (const name of names) {
+    const marker = `.icon--${prefix}--${name}`;
+    const pattern = new RegExp(`${escapeRegExp(marker)}(?=\\s*\\{)[^{]*\\{([^}]*)\\}`);
+    const block = css.match(pattern)?.[1];
+    const url = block?.match(/background-image:\s*url\("([^"]+)"\)/)?.[1];
+
+    if (url) {
+      previews.set(`${prefix}:${name}`, url);
+    }
+  }
+
+  return previews;
+}
+
+async function hydrateIconPreviews(
+  icons: readonly IconSummary[],
+  signal?: AbortSignal,
+): Promise<IconSummary[]> {
+  if (icons.length === 0) {
+    return [...icons];
+  }
+
+  const groups = groupIconsByPrefix(icons);
+  const previewMaps = await mapWithConcurrency(
+    [...groups.values()],
+    PREVIEW_BATCH_CONCURRENCY,
+    async (group) => {
+      const prefix = group[0].prefix;
+      const names = group.map((icon) => icon.name);
+      const endpoint = buildIconifyCssUrl(prefix, names);
+
+      try {
+        const response = await fetch(endpoint, {
+          signal,
+          headers: { Accept: 'text/css' },
+        });
+
+        if (!response.ok) {
+          return new Map<string, string>();
+        }
+
+        return parseIconifyCssPreviews(prefix, await response.text(), names);
+      } catch (error) {
+        if (isAbortError(error)) {
+          throw error;
+        }
+
+        return new Map<string, string>();
+      }
+    },
+  );
+  const previews = new Map<string, string>();
+
+  for (const previewMap of previewMaps) {
+    for (const [fullName, url] of previewMap) {
+      previews.set(fullName, url);
+    }
+  }
+
+  return icons.map((icon) => {
+    const previewUrl = previews.get(icon.fullName);
+
+    return previewUrl ? { ...icon, previewUrl } : icon;
+  });
 }
 
 export function parseIconifySearchResponse(payload: unknown): IconSearchResult {
@@ -146,6 +272,11 @@ export const iconifyProvider: IconProvider = {
       throw new IconSearchError('Iconify returned an unreadable response.', { cause: error });
     }
 
-    return parseIconifySearchResponse(payload);
+    const result = parseIconifySearchResponse(payload);
+
+    return {
+      ...result,
+      icons: await hydrateIconPreviews(result.icons, signal),
+    };
   },
 };

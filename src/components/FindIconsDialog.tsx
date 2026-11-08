@@ -3,7 +3,7 @@ import type { MouseEvent } from 'react';
 import { describeAttribution, humanizeIconName, pluralize } from '../lib/format';
 import type { IconSummary } from '../lib/providers/types';
 import { useIconSearch } from '../hooks/useIconSearch';
-import { CloseGlyph, SearchGlyph, SparklesGlyph } from './Glyphs';
+import { CloseGlyph, ImageGlyph, SearchGlyph, SparklesGlyph } from './Glyphs';
 
 const SUGGESTED_TERMS = ['home', 'star', 'rocket', 'game', 'heart', 'coffee'];
 
@@ -23,6 +23,33 @@ function attributionTitle(icon: IconSummary): string {
     authorUrl: icon.authorUrl,
     license: icon.license,
   });
+}
+
+function IconResultArt({ icon }: { icon: IconSummary }) {
+  const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    setFailed(false);
+  }, [icon.previewUrl]);
+
+  return (
+    <span className="icon-result-art">
+      {icon.previewUrl && !failed ? (
+        <img
+          src={icon.previewUrl}
+          alt=""
+          loading="lazy"
+          width="34"
+          height="34"
+          onError={() => setFailed(true)}
+        />
+      ) : (
+        <span className="tile-fallback">
+          <ImageGlyph />
+        </span>
+      )}
+    </span>
+  );
 }
 
 export function FindIconsDialog({ open, onClose, onSelect }: FindIconsDialogProps) {
@@ -220,9 +247,7 @@ export function FindIconsDialog({ open, onClose, onSelect }: FindIconsDialogProp
                       onClick={() => handleSelect(icon)}
                       aria-label={`Add ${icon.fullName} icon from ${icon.collectionName} to your collection`}
                     >
-                      <span className="icon-result-art">
-                        <img src={icon.svgUrl} alt="" loading="lazy" width="34" height="34" />
-                      </span>
+                      <IconResultArt icon={icon} />
                       <span className="icon-result-name">{humanizeIconName(icon.name)}</span>
                       <span className="icon-result-collection">{icon.collectionName}</span>
                     </button>

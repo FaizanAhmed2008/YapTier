@@ -87,7 +87,7 @@ export function useTierEditor() {
       const image: CollectionImage = {
         id: createId('icon'),
         name: humanizeIconName(icon.name),
-        src: icon.svgUrl,
+        src: icon.previewUrl ?? icon.svgUrl,
         source: 'icon',
         isObjectUrl: false,
         icon: {

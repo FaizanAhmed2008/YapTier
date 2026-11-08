@@ -68,6 +68,16 @@ describe('useTierEditor', () => {
     });
   });
 
+  it('prefers hydrated preview data when adding an icon', () => {
+    const { result } = renderHook(() => useTierEditor());
+
+    act(() => {
+      result.current.addIcon({ ...icon, previewUrl: 'data:image/svg+xml,%3Csvg%3Ehome%3C/svg%3E' });
+    });
+
+    expect(result.current.collection[0].src).toBe('data:image/svg+xml,%3Csvg%3Ehome%3C/svg%3E');
+  });
+
   it('moves items between the collection and tiers', () => {
     const { result } = renderHook(() => useTierEditor());
     const png = new File(['png'], 'cat.png', { type: 'image/png' });

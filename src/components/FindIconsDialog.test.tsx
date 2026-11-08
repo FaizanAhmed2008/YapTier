@@ -23,11 +23,37 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
-function mockSearch(payloadValue: unknown = payload, ok = true, status = 200) {
-  const fetchMock = vi.fn().mockResolvedValue({
-    ok,
-    status,
-    json: async () => payloadValue,
+const previewCss: Record<string, string> = {
+  mdi: '.icon--mdi--home { background-image: url("data:image/svg+xml,%3Csvg%3Ehome%3C/svg%3E"); }',
+  solar:
+    '.icon--solar--home-bold { background-image: url("data:image/svg+xml,%3Csvg%3Ebold%3C/svg%3E"); }',
+};
+
+function mockSearch(
+  payloadValue: unknown = payload,
+  ok = true,
+  status = 200,
+  previewsOk = true,
+) {
+  const fetchMock = vi.fn((input: RequestInfo | URL) => {
+    const url = String(input);
+
+    if (url.includes('/search?')) {
+      return Promise.resolve({
+        ok,
+        status,
+        json: async () => payloadValue,
+      });
+    }
+
+    const prefix = decodeURIComponent(url.match(/\/([^/]+)\.css\?/)?.[1] ?? '');
+    const css = previewCss[prefix];
+
+    return Promise.resolve({
+      ok: previewsOk && Boolean(css),
+      status: previewsOk && css ? 200 : 404,
+      text: async () => css ?? '',
+    });
   });
   vi.stubGlobal('fetch', fetchMock);
   return fetchMock;
@@ -72,6 +98,47 @@ describe('FindIconsDialog', () => {
       collectionName: 'Material Design Icons',
       license: { title: 'Apache 2.0' },
     });
+  });
+
+  it('renders hydrated preview data', async () => {
+    mockSearch();
+
+    render(<FindIconsDialog open onClose={vi.fn()} onSelect={vi.fn()} />);
+
+    fireEvent.change(screen.getByRole('searchbox', { name: 'Search icons' }), {
+      target: { value: 'home' },
+    });
+
+    const resultButton = await screen.findByRole(
+      'button',
+      { name: /add mdi:home icon from material design icons/i },
+      { timeout: 2500 },
+    );
+
+    expect(resultButton.querySelector('img')).toHaveAttribute(
+      'src',
+      'data:image/svg+xml,%3Csvg%3Ehome%3C/svg%3E',
+    );
+  });
+
+  it('shows a fallback when preview batches fail', async () => {
+    mockSearch(payload, true, 200, false);
+
+    const { container } = render(
+      <FindIconsDialog open onClose={vi.fn()} onSelect={vi.fn()} />,
+    );
+
+    fireEvent.change(screen.getByRole('searchbox', { name: 'Search icons' }), {
+      target: { value: 'home' },
+    });
+
+    await screen.findByRole(
+      'button',
+      { name: /add mdi:home icon from material design icons/i },
+      { timeout: 2500 },
+    );
+
+    expect(container.querySelector('.tile-fallback')).toBeInTheDocument();
   });
 
   it('shows an empty state when no icons match', async () => {

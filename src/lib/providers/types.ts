@@ -12,6 +12,7 @@ export interface IconSummary {
   providerId: string;
   providerLabel: string;
   svgUrl: string;
+  previewUrl?: string;
 }
 
 export interface IconSearchResult {

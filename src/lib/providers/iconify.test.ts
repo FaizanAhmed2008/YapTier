@@ -1,5 +1,11 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { buildIconifySvgUrl, iconifyProvider, parseIconifySearchResponse } from './iconify';
+import {
+  buildIconifyCssUrl,
+  buildIconifySvgUrl,
+  iconifyProvider,
+  parseIconifyCssPreviews,
+  parseIconifySearchResponse,
+} from './iconify';
 import { IconSearchError } from './types';
 
 const searchPayload = {
@@ -23,6 +29,68 @@ const searchPayload = {
   },
 };
 
+const mdiCss = `
+.icon--mdi {
+  display: inline-block;
+}
+
+.icon--mdi--home-outline {
+  background-image: url("data:image/svg+xml,%3Csvg%3Eoutline%3C/svg%3E");
+}
+
+.icon--mdi--home {
+  background-image: url("data:image/svg+xml,%3Csvg%3Ehome%3C/svg%3E");
+}
+`;
+
+const solarCss = `
+.icon--solar--home-bold {
+  background-image: url("data:image/svg+xml,%3Csvg%3Ebold%3C/svg%3E");
+}
+`;
+
+function jsonResponse(payload: unknown, ok = true, status = 200) {
+  return {
+    ok,
+    status,
+    json: async () => payload,
+  };
+}
+
+function textResponse(text: string, ok = true, status = 200) {
+  return {
+    ok,
+    status,
+    text: async () => text,
+  };
+}
+
+function mockIconify(
+  options: {
+    search?: unknown;
+    css?: Record<string, string>;
+    searchOk?: boolean;
+    searchStatus?: number;
+  } = {},
+) {
+  const fetchMock = vi.fn((input: RequestInfo | URL) => {
+    const url = String(input);
+
+    if (url.includes('/search?')) {
+      return Promise.resolve(
+        jsonResponse(options.search ?? searchPayload, options.searchOk ?? true, options.searchStatus ?? 200),
+      );
+    }
+
+    const prefix = decodeURIComponent(url.match(/\/([^/]+)\.css\?/)?.[1] ?? '');
+    const css = options.css?.[prefix];
+
+    return Promise.resolve(css ? textResponse(css) : textResponse('', false, 404));
+  });
+  vi.stubGlobal('fetch', fetchMock);
+  return fetchMock;
+}
+
 afterEach(() => {
   vi.unstubAllGlobals();
 });
@@ -37,6 +105,26 @@ describe('buildIconifySvgUrl', () => {
   it('rejects malformed icon names', () => {
     expect(() => buildIconifySvgUrl('home')).toThrow(IconSearchError);
     expect(() => buildIconifySvgUrl('mdi:')).toThrow(IconSearchError);
+  });
+});
+
+describe('buildIconifyCssUrl', () => {
+  it('builds a batch URL for a collection prefix', () => {
+    expect(buildIconifyCssUrl('mdi', ['home', 'home-outline'])).toBe(
+      'https://api.iconify.design/mdi.css?icons=home,home-outline&height=96&color=%23e8ecf8',
+    );
+  });
+});
+
+describe('parseIconifyCssPreviews', () => {
+  it('extracts each requested icon without matching longer names', () => {
+    const previews = parseIconifyCssPreviews('mdi', mdiCss, ['home', 'home-outline', 'missing']);
+
+    expect(previews.get('mdi:home')).toBe('data:image/svg+xml,%3Csvg%3Ehome%3C/svg%3E');
+    expect(previews.get('mdi:home-outline')).toBe(
+      'data:image/svg+xml,%3Csvg%3Eoutline%3C/svg%3E',
+    );
+    expect(previews.has('mdi:missing')).toBe(false);
   });
 });
 
@@ -67,17 +155,12 @@ describe('parseIconifySearchResponse', () => {
 });
 
 describe('iconifyProvider.search', () => {
-  it('requests the Iconify search API and returns parsed results', async () => {
-    const fetchMock = vi.fn().mockResolvedValue({
-      ok: true,
-      status: 200,
-      json: async () => searchPayload,
-    });
-    vi.stubGlobal('fetch', fetchMock);
+  it('loads previews in one batch per collection prefix', async () => {
+    const fetchMock = mockIconify({ css: { mdi: mdiCss, solar: solarCss } });
 
     const result = await iconifyProvider.search('home', new AbortController().signal);
 
-    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(fetchMock).toHaveBeenCalledTimes(3);
     expect(fetchMock).toHaveBeenCalledWith(
       'https://api.iconify.design/search?query=home&limit=72',
       expect.objectContaining({
@@ -85,19 +168,44 @@ describe('iconifyProvider.search', () => {
         signal: expect.any(AbortSignal),
       }),
     );
-    expect(result.icons).toHaveLength(2);
+    expect(fetchMock).toHaveBeenCalledWith(
+      buildIconifyCssUrl('mdi', ['home']),
+      expect.objectContaining({
+        headers: { Accept: 'text/css' },
+        signal: expect.any(AbortSignal),
+      }),
+    );
+    expect(fetchMock).toHaveBeenCalledWith(
+      buildIconifyCssUrl('solar', ['home-bold']),
+      expect.objectContaining({
+        headers: { Accept: 'text/css' },
+        signal: expect.any(AbortSignal),
+      }),
+    );
+    expect(result.icons[0]).toMatchObject({
+      svgUrl: 'https://api.iconify.design/mdi/home.svg?height=96&color=%23e8ecf8',
+      previewUrl: 'data:image/svg+xml,%3Csvg%3Ehome%3C/svg%3E',
+    });
+    expect(result.icons[1].previewUrl).toBe('data:image/svg+xml,%3Csvg%3Ebold%3C/svg%3E');
   });
 
-  it('surfaces HTTP failures as IconSearchError messages', async () => {
-    vi.stubGlobal(
-      'fetch',
-      vi.fn().mockResolvedValue({ ok: false, status: 503, json: async () => ({}) }),
-    );
+  it('keeps search results when a preview batch fails', async () => {
+    mockIconify({ css: { mdi: mdiCss } });
+
+    const result = await iconifyProvider.search('home');
+
+    expect(result.icons).toHaveLength(2);
+    expect(result.icons[0].previewUrl).toBe('data:image/svg+xml,%3Csvg%3Ehome%3C/svg%3E');
+    expect(result.icons[1].previewUrl).toBeUndefined();
+  });
+
+  it('surfaces search HTTP failures as IconSearchError messages', async () => {
+    mockIconify({ searchOk: false, searchStatus: 503 });
 
     await expect(iconifyProvider.search('home')).rejects.toThrow(/503/);
   });
 
-  it('turns network failures into a helpful message', async () => {
+  it('turns search network failures into a helpful message', async () => {
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new TypeError('Failed to fetch')));
 
     await expect(iconifyProvider.search('home')).rejects.toThrow(/could not reach iconify/i);
