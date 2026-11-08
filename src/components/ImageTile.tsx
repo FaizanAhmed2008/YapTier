@@ -18,7 +18,7 @@ export function ImageTile({ image, container, onRemove, removeAction }: ImageTil
   const [previewFailed, setPreviewFailed] = useState(false);
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: image.id,
-    data: { container },
+    data: { container, dropType: 'item' },
   });
 
   const removeLabel =

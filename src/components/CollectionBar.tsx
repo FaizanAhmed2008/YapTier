@@ -11,7 +11,10 @@ interface CollectionBarProps {
 }
 
 export function CollectionBar({ images, isOver, onRemove }: CollectionBarProps) {
-  const { setNodeRef } = useDroppable({ id: COLLECTION_ID });
+  const { setNodeRef } = useDroppable({
+    id: COLLECTION_ID,
+    data: { dropType: 'container' },
+  });
 
   return (
     <section

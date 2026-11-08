@@ -5,7 +5,6 @@ import {
   KeyboardSensor,
   MouseSensor,
   TouchSensor,
-  closestCenter,
   useSensor,
   useSensors,
 } from '@dnd-kit/core';
@@ -17,6 +16,7 @@ import {
   findItemContainer,
   parseContainerId,
 } from '../lib/board';
+import { boardCollisionDetection } from '../lib/dndCollisions';
 import type { ContainerId, TierBoardState } from '../lib/board';
 import type { CollectionImage } from '../types';
 import { CollectionBar } from './CollectionBar';
@@ -80,7 +80,7 @@ export function TierEditor({ board, onMove, onRemove, onReturn }: TierEditorProp
   return (
     <DndContext
       sensors={sensors}
-      collisionDetection={closestCenter}
+      collisionDetection={boardCollisionDetection}
       onDragStart={handleDragStart}
       onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}

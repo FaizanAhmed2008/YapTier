@@ -13,7 +13,10 @@ interface TierRowProps {
 }
 
 export function TierRow({ tier, images, isOver, onReturn }: TierRowProps) {
-  const { setNodeRef } = useDroppable({ id: tierContainerId(tier) });
+  const { setNodeRef } = useDroppable({
+    id: tierContainerId(tier),
+    data: { dropType: 'container' },
+  });
 
   return (
     <div className="tier-row">
