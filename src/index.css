@@ -1067,6 +1067,38 @@ p {
   color: var(--text);
 }
 
+.toast {
+  position: fixed;
+  z-index: 1;
+  bottom: 22px;
+  left: 50%;
+  max-width: calc(100vw - 32px);
+  padding: 10px 16px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: #303030;
+  color: var(--text);
+  font-size: 12.5px;
+  font-weight: 650;
+  line-height: 1.2;
+  text-align: center;
+  transform: translateX(-50%);
+  pointer-events: none;
+  animation: toast-in 160ms ease-out;
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
 @media (hover: none) {
   .tile-remove {
     opacity: 1;

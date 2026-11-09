@@ -69,7 +69,8 @@ describe('FindIconsDialog', () => {
     expect(screen.getByRole('heading', { name: 'Find Icons' })).toBeInTheDocument();
     expect(screen.getByText('What are you looking for?')).toBeInTheDocument();
 
-    fireEvent.change(screen.getByRole('searchbox', { name: 'Search icons' }), {
+    const searchInput = screen.getByRole('searchbox', { name: 'Search icons' });
+    fireEvent.change(searchInput, {
       target: { value: 'home' },
     });
 
@@ -98,6 +99,10 @@ describe('FindIconsDialog', () => {
       collectionName: 'Material Design Icons',
       license: { title: 'Apache 2.0' },
     });
+    expect(searchInput).toHaveValue('');
+    expect(searchInput).toHaveFocus();
+    expect(screen.getByText('What are you looking for?')).toBeInTheDocument();
+    expect(screen.getByText('Icon added to collection')).toBeInTheDocument();
   });
 
   it('renders hydrated preview data', async () => {

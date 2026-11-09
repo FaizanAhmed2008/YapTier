@@ -1,9 +1,10 @@
-import { useEffect, useId, useRef, useState } from 'react';
+import { useCallback, useEffect, useId, useRef, useState } from 'react';
 import type { MouseEvent } from 'react';
 import { describeAttribution, humanizeIconName, pluralize } from '../lib/format';
 import type { IconSummary } from '../lib/providers/types';
 import { useIconSearch } from '../hooks/useIconSearch';
 import { CloseGlyph, ImageGlyph, SearchGlyph, SparklesGlyph } from './Glyphs';
+import { Toast } from './Toast';
 
 const SUGGESTED_TERMS = ['home', 'star', 'rocket', 'game', 'heart', 'coffee'];
 
@@ -58,6 +59,9 @@ export function FindIconsDialog({ open, onClose, onSelect }: FindIconsDialogProp
   const titleId = useId();
   const searchId = useId();
   const [query, setQuery] = useState('');
+  const [toast, setToast] = useState<{ id: number; message: string } | null>(null);
+  const toastIdRef = useRef(0);
+  const hideToast = useCallback(() => setToast(null), []);
   const { status, icons, total, error, isDebouncing, retry } = useIconSearch(query);
 
   const trimmedQuery = query.trim();
@@ -97,11 +101,16 @@ export function FindIconsDialog({ open, onClose, onSelect }: FindIconsDialogProp
   useEffect(() => {
     if (!open) {
       setQuery('');
+      setToast(null);
     }
   }, [open]);
 
   const handleSelect = (icon: IconSummary) => {
     onSelect(icon);
+    setQuery('');
+    toastIdRef.current += 1;
+    setToast({ id: toastIdRef.current, message: 'Icon added to collection' });
+    searchInputRef.current?.focus();
   };
 
   const handleBackdropClick = (event: MouseEvent<HTMLDialogElement>) => {
@@ -284,6 +293,12 @@ export function FindIconsDialog({ open, onClose, onSelect }: FindIconsDialogProp
           <span>Press Esc to close</span>
         </footer>
       </div>
+
+      <Toast
+        key={toast?.id ?? 0}
+        message={toast?.message ?? null}
+        onDismiss={hideToast}
+      />
     </dialog>
   );
 }
