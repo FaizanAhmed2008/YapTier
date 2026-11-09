@@ -1,4 +1,4 @@
-import type { CollectionImage } from '../types';
+import type { CollectionImage, TierConfig } from '../types';
 
 export const TIER_IDS = ['S', 'A', 'B', 'C', 'D'] as const;
 export type TierId = (typeof TIER_IDS)[number];
@@ -6,15 +6,27 @@ export type TierId = (typeof TIER_IDS)[number];
 export const COLLECTION_ID = 'collection';
 export type ContainerId = TierId | typeof COLLECTION_ID;
 
+export const DEFAULT_TIER_CONFIGS: Record<TierId, TierConfig> = {
+  S: { label: 'S', color: '#ff7f7f' },
+  A: { label: 'A', color: '#ffbf7f' },
+  B: { label: 'B', color: '#ffdf7f' },
+  C: { label: 'C', color: '#bfff7f' },
+  D: { label: 'D', color: '#7fbfff' },
+};
+
 export interface TierBoardState {
+  title?: string;
   collection: CollectionImage[];
   tiers: Record<TierId, CollectionImage[]>;
+  tierConfigs: Record<TierId, TierConfig>;
 }
 
-export function createEmptyBoard(): TierBoardState {
+export function createEmptyBoard(title = 'YapTier List'): TierBoardState {
   return {
+    title,
     collection: [],
     tiers: { S: [], A: [], B: [], C: [], D: [] },
+    tierConfigs: { ...DEFAULT_TIER_CONFIGS },
   };
 }
 
@@ -186,4 +198,46 @@ export function getAllImages(state: TierBoardState): CollectionImage[] {
     ...state.collection,
     ...TIER_IDS.flatMap((tier) => state.tiers[tier]),
   ];
+}
+
+export function getTierConfig(state: TierBoardState, tier: TierId): TierConfig {
+  return state.tierConfigs?.[tier] ?? DEFAULT_TIER_CONFIGS[tier];
+}
+
+export function updateTierConfig(
+  state: TierBoardState,
+  tier: TierId,
+  config: Partial<TierConfig>,
+): TierBoardState {
+  const current = getTierConfig(state, tier);
+  return {
+    ...state,
+    tierConfigs: {
+      ...state.tierConfigs,
+      [tier]: {
+        label: config.label?.trim() ? config.label.trim() : current.label,
+        color: config.color?.trim() ? config.color.trim() : current.color,
+      },
+    },
+  };
+}
+
+export function clearBoard(state: TierBoardState): TierBoardState {
+  const placedItems = TIER_IDS.flatMap((tier) => state.tiers[tier]);
+  return {
+    ...state,
+    collection: [...state.collection, ...placedItems],
+    tiers: { S: [], A: [], B: [], C: [], D: [] },
+  };
+}
+
+export function resetBoard(title = 'YapTier List'): TierBoardState {
+  return createEmptyBoard(title);
+}
+
+export function setBoardTitle(state: TierBoardState, title: string): TierBoardState {
+  return {
+    ...state,
+    title: title.trim() || 'YapTier List',
+  };
 }

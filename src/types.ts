@@ -31,6 +31,12 @@ export interface CollectionImage {
   isObjectUrl: boolean;
   icon?: IconImageData;
   text?: string;
+  dataUrl?: string;
+}
+
+export interface TierConfig {
+  label: string;
+  color: string;
 }
 
 export interface UploadRejection {

@@ -1,16 +1,21 @@
 import { describe, expect, it } from 'vitest';
 import {
   COLLECTION_ID,
+  clearBoard,
   createEmptyBoard,
   findItem,
   findItemContainer,
   getAllImages,
   getContainerItems,
+  getTierConfig,
   parseContainerId,
   removeItemFromBoard,
+  resetBoard,
   resolveDrop,
   returnItemToCollection,
+  setBoardTitle,
   tierContainerId,
+  updateTierConfig,
 } from './board';
 import type { TierBoardState } from './board';
 import type { CollectionImage } from '../types';
@@ -153,5 +158,34 @@ describe('board mutations', () => {
     const board = withItems(['one'], { S: ['two'], D: ['three'] });
 
     expect(ids(getAllImages(board))).toEqual(['one', 'two', 'three']);
+  });
+
+  it('updates tier configuration and colors', () => {
+    const board = createEmptyBoard();
+    const updated = updateTierConfig(board, 'S', { label: 'GOD TIER', color: '#ff0000' });
+
+    expect(getTierConfig(updated, 'S')).toEqual({ label: 'GOD TIER', color: '#ff0000' });
+    expect(getTierConfig(updated, 'A')).toEqual({ label: 'A', color: '#ffbf7f' });
+  });
+
+  it('clears placed items back to the unranked collection', () => {
+    const board = withItems(['unranked-1'], { S: ['s-1'], A: ['a-1', 'a-2'] });
+    const cleared = clearBoard(board);
+
+    expect(ids(cleared.collection)).toEqual(['unranked-1', 's-1', 'a-1', 'a-2']);
+    expect(cleared.tiers.S).toEqual([]);
+    expect(cleared.tiers.A).toEqual([]);
+  });
+
+  it('resets the board and sets custom titles', () => {
+    const board = withItems(['one'], { S: ['two'] });
+    const reset = resetBoard('My Favorite Games');
+
+    expect(reset.title).toBe('My Favorite Games');
+    expect(reset.collection).toEqual([]);
+    expect(reset.tiers.S).toEqual([]);
+
+    const titled = setBoardTitle(reset, 'Anime 2026');
+    expect(titled.title).toBe('Anime 2026');
   });
 });
