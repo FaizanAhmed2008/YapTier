@@ -24,7 +24,9 @@
   --danger: #ff9a9a;
   --focus: #f1f1f1;
   --radius: 6px;
-  --tile-size: clamp(52px, 7.6vh, 72px);
+  --collection-tile-size: clamp(48px, 6.8vh, 64px);
+  --tier-tile-size: clamp(68px, 12.8vh, 118px);
+  --tile-size: var(--collection-tile-size);
 }
 
 * {
@@ -104,13 +106,13 @@ p {
 .app {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
   width: 100%;
   max-width: 1440px;
   height: 100vh;
   height: 100dvh;
   margin: 0 auto;
-  padding: 10px 14px 12px;
+  padding: 8px 12px 10px;
   overflow: hidden;
 }
 
@@ -120,7 +122,7 @@ p {
   align-items: center;
   justify-content: space-between;
   gap: 12px 20px;
-  min-height: 40px;
+  min-height: 36px;
   padding: 2px;
 }
 
@@ -268,7 +270,7 @@ p {
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
   min-height: 0;
   overflow: hidden;
 }
@@ -277,7 +279,7 @@ p {
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
   min-height: 0;
 }
 
@@ -285,9 +287,9 @@ p {
   display: grid;
   flex: 1;
   grid-template-rows: repeat(5, minmax(0, 1fr));
-  gap: 2px;
+  gap: 1px;
   min-height: 0;
-  padding: 2px;
+  padding: 1px;
   overflow: hidden;
   border: 1px solid var(--separator);
   border-radius: var(--radius);
@@ -296,7 +298,7 @@ p {
 
 .tier-row {
   display: grid;
-  grid-template-columns: 56px minmax(0, 1fr);
+  grid-template-columns: 44px minmax(0, 1fr);
   min-height: 0;
   overflow: hidden;
   background: var(--board-bg);
@@ -308,7 +310,7 @@ p {
   min-height: 0;
   border-right: 1px solid var(--separator);
   color: #171717;
-  font-size: 22px;
+  font-size: 21px;
   font-weight: 900;
   letter-spacing: -0.04em;
   line-height: 1;
@@ -338,15 +340,20 @@ p {
 .tier-dropzone {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 3px;
   min-width: 0;
   min-height: 0;
-  padding: 5px;
+  padding: 4px;
   overflow-x: auto;
   overflow-y: hidden;
   overscroll-behavior-x: contain;
   scrollbar-color: #555 transparent;
   scrollbar-width: thin;
+}
+
+.tier-dropzone .image-tile {
+  width: var(--tier-tile-size);
+  height: var(--tier-tile-size);
 }
 
 .tier-dropzone.is-over,
@@ -369,8 +376,8 @@ p {
 .collection-bar {
   display: grid;
   flex: none;
-  grid-template-columns: 56px minmax(0, 1fr);
-  height: clamp(72px, 10vh, 88px);
+  grid-template-columns: 44px minmax(0, 1fr);
+  height: clamp(64px, 8.4vh, 76px);
   overflow: hidden;
   border: 1px solid var(--separator);
   border-radius: var(--radius);
@@ -383,7 +390,7 @@ p {
   border-right: 1px solid var(--separator);
   background: #1d1d1d;
   color: var(--text-muted);
-  font-size: 9.5px;
+  font-size: 9px;
   font-weight: 800;
   letter-spacing: 0.06em;
   line-height: 1.2;
@@ -395,9 +402,9 @@ p {
 .collection-strip {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 3px;
   min-width: 0;
-  padding: 5px;
+  padding: 4px;
   overflow-x: auto;
   overflow-y: hidden;
   overscroll-behavior-x: contain;
@@ -418,20 +425,9 @@ p {
   width: var(--tile-size);
   height: var(--tile-size);
   overflow: hidden;
-  border: 1px solid #3f3f3f;
+  border: 1px solid #363636;
   border-radius: 4px;
-  background-color: #1b1b1b;
-  background-image:
-    linear-gradient(45deg, #252525 25%, transparent 25%),
-    linear-gradient(-45deg, #252525 25%, transparent 25%),
-    linear-gradient(45deg, transparent 75%, #252525 75%),
-    linear-gradient(-45deg, transparent 75%, #252525 75%);
-  background-position:
-    0 0,
-    0 5px,
-    5px -5px,
-    -5px 0;
-  background-size: 10px 10px;
+  background: #202020;
   list-style: none;
   touch-action: manipulation;
 }
@@ -445,7 +441,7 @@ p {
   place-items: center;
   width: 100%;
   height: 100%;
-  padding: 6px;
+  padding: 4px;
   border: 0;
   background: transparent;
   cursor: grab;
@@ -467,7 +463,7 @@ p {
 
 .image-tile-text,
 .drag-preview-text {
-  background-image: none;
+  background: #242424;
 }
 
 .tile-text {
@@ -486,6 +482,12 @@ p {
   text-align: center;
 }
 
+.tier-dropzone .tile-text,
+.drag-preview .tile-text {
+  -webkit-line-clamp: 4;
+  font-size: 14px;
+}
+
 .tile-fallback {
   display: grid;
   place-items: center;
@@ -495,19 +497,19 @@ p {
 }
 
 .tile-fallback svg {
-  width: 22px;
-  height: 22px;
+  width: 34%;
+  height: 34%;
 }
 
 .tile-remove {
   position: absolute;
-  top: 2px;
-  right: 2px;
+  top: 3px;
+  right: 3px;
   display: grid;
   place-items: center;
-  width: 17px;
-  height: 17px;
-  padding: 2px;
+  width: 20px;
+  height: 20px;
+  padding: 3px;
   border: 1px solid #555;
   border-radius: 50%;
   opacity: 0;
@@ -520,8 +522,8 @@ p {
 }
 
 .tile-remove svg {
-  width: 10px;
-  height: 10px;
+  width: 11px;
+  height: 11px;
 }
 
 .image-tile:hover .tile-remove,
@@ -538,23 +540,12 @@ p {
 .drag-preview {
   display: grid;
   place-items: center;
-  width: calc(var(--tile-size) + 8px);
-  height: calc(var(--tile-size) + 8px);
-  padding: 8px;
+  width: calc(var(--tier-tile-size) + 10px);
+  height: calc(var(--tier-tile-size) + 10px);
+  padding: 5px;
   border: 1px solid #777;
   border-radius: 4px;
-  background-color: #1b1b1b;
-  background-image:
-    linear-gradient(45deg, #252525 25%, transparent 25%),
-    linear-gradient(-45deg, #252525 25%, transparent 25%),
-    linear-gradient(45deg, transparent 75%, #252525 75%),
-    linear-gradient(-45deg, transparent 75%, #252525 75%);
-  background-position:
-    0 0,
-    0 5px,
-    5px -5px,
-    -5px 0;
-  background-size: 10px 10px;
+  background: #202020;
   cursor: grabbing;
 }
 
@@ -1106,6 +1097,11 @@ p {
 }
 
 @media (max-width: 640px) {
+  :root {
+    --collection-tile-size: clamp(46px, 6.4vh, 58px);
+    --tier-tile-size: clamp(52px, 11.8vh, 96px);
+  }
+
   .app {
     gap: 6px;
     padding: 8px;
@@ -1137,11 +1133,20 @@ p {
 
   .tier-row,
   .collection-bar {
-    grid-template-columns: 44px minmax(0, 1fr);
+    grid-template-columns: 40px minmax(0, 1fr);
   }
 
   .tier-label {
     font-size: 18px;
+  }
+
+  .tier-dropzone {
+    gap: 2px;
+    padding: 3px;
+  }
+
+  .tier-dropzone .tile-text {
+    font-size: 12px;
   }
 
   .collection-label {
@@ -1150,7 +1155,18 @@ p {
   }
 
   .collection-bar {
-    height: clamp(58px, 9vh, 72px);
+    height: clamp(56px, 8.2vh, 68px);
+  }
+
+  .tile-remove {
+    width: 22px;
+    height: 22px;
+    padding: 4px;
+  }
+
+  .tile-remove svg {
+    width: 12px;
+    height: 12px;
   }
 
   .finder-dialog {
@@ -1209,9 +1225,25 @@ p {
     padding: 0 8px;
   }
 
+  .tier-row,
+  .collection-bar {
+    grid-template-columns: 36px minmax(0, 1fr);
+  }
+
   .icon-grid,
   .skeleton-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-height: 640px) {
+  :root {
+    --collection-tile-size: clamp(44px, 6vh, 54px);
+    --tier-tile-size: clamp(54px, 11vh, 78px);
+  }
+
+  .collection-bar {
+    height: clamp(56px, 8vh, 68px);
   }
 }
 
