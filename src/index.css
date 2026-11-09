@@ -340,10 +340,11 @@ p {
 .tier-dropzone {
   display: flex;
   align-items: center;
-  gap: 3px;
+  height: 100%;
+  gap: 6px;
   min-width: 0;
   min-height: 0;
-  padding: 4px;
+  padding: 4px 8px;
   overflow-x: auto;
   overflow-y: hidden;
   overscroll-behavior-x: contain;
@@ -352,8 +353,86 @@ p {
 }
 
 .tier-dropzone .image-tile {
-  width: var(--tier-tile-size);
-  height: var(--tier-tile-size);
+  height: 100%;
+  width: auto;
+}
+
+.tier-dropzone .image-tile-upload {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  overflow: visible;
+}
+
+.tier-dropzone .image-tile-upload .tile-drag {
+  width: auto;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tier-dropzone .image-tile-upload .tile-drag img {
+  height: 100%;
+  width: auto;
+  max-width: none;
+  object-fit: contain;
+  object-position: center;
+  border-radius: 4px;
+}
+
+.tier-dropzone .image-tile-icon {
+  width: auto;
+  height: 100%;
+  aspect-ratio: 1;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  overflow: visible;
+}
+
+.tier-dropzone .image-tile-icon .tile-drag {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tier-dropzone .image-tile-icon .tile-drag img {
+  height: 100%;
+  width: 100%;
+  object-fit: contain;
+  object-position: center;
+}
+
+.tier-dropzone .image-tile-text {
+  height: 100%;
+  width: auto;
+  min-width: clamp(72px, 9vw, 96px);
+  max-width: clamp(160px, 24vw, 240px);
+  border: 1px solid #4a4a4a;
+  border-radius: 6px;
+  background: #2a2a2a;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+}
+
+.tier-dropzone .image-tile-text .tile-drag {
+  width: 100%;
+  height: 100%;
+  padding: 6px 10px;
+  border: 0;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .tier-dropzone.is-over,
@@ -402,14 +481,94 @@ p {
 .collection-strip {
   display: flex;
   align-items: center;
-  gap: 3px;
+  gap: 6px;
   min-width: 0;
-  padding: 4px;
+  height: 100%;
+  padding: 4px 8px;
   overflow-x: auto;
   overflow-y: hidden;
   overscroll-behavior-x: contain;
   scrollbar-color: #555 transparent;
   scrollbar-width: thin;
+}
+
+.collection-strip .image-tile {
+  height: 100%;
+  width: auto;
+}
+
+.collection-strip .image-tile-upload {
+  border: 0;
+  background: transparent;
+  overflow: visible;
+}
+
+.collection-strip .image-tile-upload .tile-drag {
+  width: auto;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.collection-strip .image-tile-upload .tile-drag img {
+  height: 100%;
+  width: auto;
+  max-width: none;
+  object-fit: contain;
+  object-position: center;
+  border-radius: 4px;
+}
+
+.collection-strip .image-tile-icon {
+  width: auto;
+  height: 100%;
+  aspect-ratio: 1;
+  border: 0;
+  background: transparent;
+  overflow: visible;
+}
+
+.collection-strip .image-tile-icon .tile-drag {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.collection-strip .image-tile-icon .tile-drag img {
+  height: 100%;
+  width: 100%;
+  object-fit: contain;
+}
+
+.collection-strip .image-tile-text {
+  height: 100%;
+  width: auto;
+  min-width: 52px;
+  max-width: 140px;
+  border: 1px solid #404040;
+  border-radius: 4px;
+  background: #272727;
+  overflow: hidden;
+}
+
+.collection-strip .image-tile-text .tile-drag {
+  width: 100%;
+  height: 100%;
+  padding: 4px 8px;
+  border: 0;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .collection-empty {
@@ -422,12 +581,6 @@ p {
 .image-tile {
   position: relative;
   flex: 0 0 auto;
-  width: var(--tile-size);
-  height: var(--tile-size);
-  overflow: hidden;
-  border: 1px solid #363636;
-  border-radius: 4px;
-  background: #202020;
   list-style: none;
   touch-action: manipulation;
 }
@@ -437,11 +590,12 @@ p {
 }
 
 .tile-drag {
-  display: grid;
-  place-items: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
   height: 100%;
-  padding: 4px;
+  padding: 0;
   border: 0;
   background: transparent;
   cursor: grab;
@@ -453,8 +607,8 @@ p {
 }
 
 .tile-drag img {
-  width: 100%;
   height: 100%;
+  width: auto;
   object-fit: contain;
   object-position: center;
   pointer-events: none;
@@ -463,29 +617,69 @@ p {
 
 .image-tile-text,
 .drag-preview-text {
-  background: #242424;
+  background: #2a2a2a;
 }
 
 .tile-text {
   display: -webkit-box;
   width: 100%;
-  max-height: 100%;
-  padding: 2px;
   overflow: hidden;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 4;
   color: var(--text);
-  font-size: 11px;
-  font-weight: 700;
+  font-family: inherit;
+  font-weight: 800;
   line-height: 1.15;
+  letter-spacing: -0.02em;
   overflow-wrap: anywhere;
   text-align: center;
 }
 
-.tier-dropzone .tile-text,
-.drag-preview .tile-text {
-  -webkit-line-clamp: 4;
-  font-size: 14px;
+.tier-dropzone .tile-text-short,
+.drag-preview .tile-text-short {
+  font-size: clamp(22px, 3vh, 30px);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+}
+
+.tier-dropzone .tile-text-medium,
+.drag-preview .tile-text-medium {
+  font-size: clamp(17px, 2.4vh, 22px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.tier-dropzone .tile-text-long,
+.drag-preview .tile-text-long {
+  font-size: clamp(14px, 1.9vh, 17px);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.tier-dropzone .tile-text-xlong,
+.drag-preview .tile-text-xlong {
+  font-size: clamp(12.5px, 1.6vh, 14.5px);
+  font-weight: 700;
+}
+
+.collection-strip .tile-text-short {
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.collection-strip .tile-text-medium {
+  font-size: 13.5px;
+  font-weight: 800;
+}
+
+.collection-strip .tile-text-long {
+  font-size: 11.5px;
+  font-weight: 700;
+}
+
+.collection-strip .tile-text-xlong {
+  font-size: 10.5px;
+  font-weight: 700;
 }
 
 .tile-fallback {
@@ -493,6 +687,8 @@ p {
   place-items: center;
   width: 100%;
   height: 100%;
+  min-width: 44px;
+  min-height: 44px;
   color: var(--text-faint);
 }
 
@@ -503,8 +699,8 @@ p {
 
 .tile-remove {
   position: absolute;
-  top: 3px;
-  right: 3px;
+  top: 2px;
+  right: 2px;
   display: grid;
   place-items: center;
   width: 20px;
@@ -513,12 +709,15 @@ p {
   border: 1px solid #555;
   border-radius: 50%;
   opacity: 0;
-  background: #161616;
+  background: rgba(22, 22, 22, 0.9);
   color: #cfcfcf;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+  z-index: 2;
   transition:
     opacity 120ms ease,
     background-color 120ms ease,
-    color 120ms ease;
+    color 120ms ease,
+    transform 120ms ease;
 }
 
 .tile-remove svg {
@@ -535,26 +734,62 @@ p {
   border-color: #a33;
   background: #3a1e1e;
   color: #ffb8b8;
+  transform: scale(1.1);
 }
 
 .drag-preview {
-  display: grid;
-  place-items: center;
-  width: calc(var(--tier-tile-size) + 10px);
-  height: calc(var(--tier-tile-size) + 10px);
-  padding: 5px;
-  border: 1px solid #777;
-  border-radius: 4px;
-  background: #202020;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: grabbing;
+  pointer-events: none;
 }
 
-.drag-preview img {
-  width: 100%;
+.drag-preview-upload {
+  width: auto;
+  height: calc(var(--tier-tile-size) + 8px);
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.55));
+}
+
+.drag-preview-upload img {
   height: 100%;
+  width: auto;
+  max-width: calc((var(--tier-tile-size) + 8px) * 2.5);
   object-fit: contain;
   object-position: center;
-  pointer-events: none;
+}
+
+.drag-preview-icon {
+  width: calc(var(--tier-tile-size) + 8px);
+  height: calc(var(--tier-tile-size) + 8px);
+  aspect-ratio: 1;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.55));
+}
+
+.drag-preview-icon img {
+  height: 100%;
+  width: 100%;
+  object-fit: contain;
+}
+
+.drag-preview-text {
+  height: calc(var(--tier-tile-size) + 8px);
+  width: auto;
+  min-width: calc(var(--tier-tile-size) + 8px);
+  max-width: 240px;
+  padding: 8px 14px;
+  background: #2a2a2a;
+  border: 1px solid #5a5a5a;
+  border-radius: 6px;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.55);
 }
 
 .upload-notice {
@@ -1141,12 +1376,28 @@ p {
   }
 
   .tier-dropzone {
-    gap: 2px;
-    padding: 3px;
+    gap: 4px;
+    padding: 3px 6px;
+  }
+
+  .tier-dropzone .tile-text-short {
+    font-size: 19px;
+  }
+
+  .tier-dropzone .tile-text-medium {
+    font-size: 15px;
+  }
+
+  .tier-dropzone .tile-text-long {
+    font-size: 13px;
+  }
+
+  .tier-dropzone .tile-text-xlong {
+    font-size: 11.5px;
   }
 
   .tier-dropzone .tile-text {
-    font-size: 12px;
+    font-size: 14px;
   }
 
   .collection-label {

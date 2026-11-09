@@ -14,7 +14,18 @@ export function ItemPreview({ image }: ItemPreviewProps) {
   }, [image.src]);
 
   if (image.source === 'text') {
-    return <span className="tile-text">{image.text ?? image.name}</span>;
+    const text = image.text ?? image.name;
+    const length = text.length;
+    const lengthClass =
+      length <= 5
+        ? 'tile-text-short'
+        : length <= 13
+          ? 'tile-text-medium'
+          : length <= 28
+            ? 'tile-text-long'
+            : 'tile-text-xlong';
+
+    return <span className={`tile-text ${lengthClass}`}>{text}</span>;
   }
 
   if (failed || !image.src) {

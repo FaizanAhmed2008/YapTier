@@ -95,10 +95,60 @@ describe('App image collection', () => {
     expect(container.querySelector('.image-tile-text .tile-text')).toHaveTextContent(
       'Must play',
     );
+    expect(container.querySelector('.image-tile-text .tile-text')).toHaveClass(
+      'tile-text-medium',
+    );
 
     fireEvent.click(screen.getByRole('button', { name: 'Remove Must play' }));
 
     expect(screen.queryByRole('button', { name: 'Must play' })).not.toBeInTheDocument();
+  });
+
+  it('assigns proportional text sizing classes for short and long text items', () => {
+    const { container } = render(<App />);
+
+    // Add short text
+    fireEvent.click(screen.getByRole('button', { name: 'Add Text' }));
+    fireEvent.change(screen.getByLabelText('Text'), { target: { value: 'GOAT' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Add' }));
+
+    // Add long text
+    fireEvent.click(screen.getByRole('button', { name: 'Add Text' }));
+    fireEvent.change(screen.getByLabelText('Text'), {
+      target: { value: 'The Legend of Zelda: Breath of the Wild' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Add' }));
+
+    const goatElement = container.querySelector('[aria-label="GOAT"] .tile-text');
+    expect(goatElement).toHaveClass('tile-text-short');
+
+    const zeldaElement = container.querySelector(
+      '[aria-label="The Legend of Zelda: Breath of the Wild"] .tile-text',
+    );
+    expect(zeldaElement).toHaveClass('tile-text-xlong');
+  });
+
+  it('renders uploaded images with proper source classes for square, landscape and portrait', async () => {
+    const { container } = render(<App />);
+
+    const input = screen.getByLabelText('Upload images');
+    const square = new File(['square-png'], 'apple.png', { type: 'image/png' });
+    const landscape = new File(['landscape-jpg'], 'banner.jpg', { type: 'image/jpeg' });
+    const portrait = new File(['portrait-png'], 'character.png', { type: 'image/png' });
+
+    fireEvent.change(input, { target: { files: [square, landscape, portrait] } });
+
+    expect(await screen.findByRole('button', { name: 'apple' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'banner' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'character' })).toBeInTheDocument();
+
+    const uploadTiles = container.querySelectorAll('.collection-strip .image-tile-upload');
+    expect(uploadTiles).toHaveLength(3);
+    uploadTiles.forEach((tile) => {
+      const img = tile.querySelector('img');
+      expect(img).toBeInTheDocument();
+      expect(img).toHaveAttribute('src');
+    });
   });
 
   it('adds several icons while keeping the finder open', async () => {
