@@ -24,7 +24,7 @@
   --danger: #ff9a9a;
   --focus: #f1f1f1;
   --radius: 6px;
-  --tile-size: clamp(48px, 7.5vh, 68px);
+  --tile-size: clamp(52px, 7.6vh, 72px);
 }
 
 * {
@@ -364,7 +364,7 @@ p {
   display: grid;
   flex: none;
   grid-template-columns: 56px minmax(0, 1fr);
-  height: clamp(68px, 9.5vh, 82px);
+  height: clamp(72px, 10vh, 88px);
   overflow: hidden;
   border: 1px solid var(--separator);
   border-radius: var(--radius);
@@ -414,7 +414,18 @@ p {
   overflow: hidden;
   border: 1px solid #3f3f3f;
   border-radius: 4px;
-  background: #1b1b1b;
+  background-color: #1b1b1b;
+  background-image:
+    linear-gradient(45deg, #252525 25%, transparent 25%),
+    linear-gradient(-45deg, #252525 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #252525 75%),
+    linear-gradient(-45deg, transparent 75%, #252525 75%);
+  background-position:
+    0 0,
+    0 5px,
+    5px -5px,
+    -5px 0;
+  background-size: 10px 10px;
   list-style: none;
   touch-action: manipulation;
 }
@@ -428,7 +439,7 @@ p {
   place-items: center;
   width: 100%;
   height: 100%;
-  padding: 7px;
+  padding: 6px;
   border: 0;
   background: transparent;
   cursor: grab;
@@ -443,6 +454,7 @@ p {
   width: 100%;
   height: 100%;
   object-fit: contain;
+  object-position: center;
   pointer-events: none;
   user-select: none;
 }
@@ -504,7 +516,18 @@ p {
   padding: 8px;
   border: 1px solid #777;
   border-radius: 4px;
-  background: #1b1b1b;
+  background-color: #1b1b1b;
+  background-image:
+    linear-gradient(45deg, #252525 25%, transparent 25%),
+    linear-gradient(-45deg, #252525 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #252525 75%),
+    linear-gradient(-45deg, transparent 75%, #252525 75%);
+  background-position:
+    0 0,
+    0 5px,
+    5px -5px,
+    -5px 0;
+  background-size: 10px 10px;
   cursor: grabbing;
 }
 
@@ -512,6 +535,7 @@ p {
   width: 100%;
   height: 100%;
   object-fit: contain;
+  object-position: center;
   pointer-events: none;
 }
 
