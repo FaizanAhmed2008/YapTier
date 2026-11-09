@@ -1,12 +1,35 @@
 import { useCallback, useEffect, useId, useRef, useState } from 'react';
 import type { MouseEvent } from 'react';
 import { describeAttribution, humanizeIconName, pluralize } from '../lib/format';
+import {
+  defaultIconSource,
+  getIconSource,
+  iconSources,
+} from '../lib/providers';
+import type { IconSourceId } from '../lib/providers';
 import type { IconSummary } from '../lib/providers/types';
 import { useIconSearch } from '../hooks/useIconSearch';
 import { CloseGlyph, ImageGlyph, SearchGlyph, SparklesGlyph } from './Glyphs';
 import { Toast } from './Toast';
 
-const SUGGESTED_TERMS = ['home', 'star', 'rocket', 'game', 'heart', 'coffee'];
+const SUGGESTED_TERMS = ['cat', 'pizza', 'rocket', 'star', 'heart', 'coffee'];
+
+interface IconCategory {
+  label: string;
+  query: string;
+  sourceId: IconSourceId;
+}
+
+const ICON_CATEGORIES: readonly IconCategory[] = [
+  { label: 'Animals', query: 'cat', sourceId: 'colorful' },
+  { label: 'Food', query: 'pizza', sourceId: 'colorful' },
+  { label: 'Gaming', query: 'game', sourceId: 'colorful' },
+  { label: 'Sports', query: 'soccer', sourceId: 'colorful' },
+  { label: 'Tech', query: 'laptop', sourceId: 'colorful' },
+  { label: 'Brands', query: 'brand', sourceId: 'iconify' },
+  { label: 'Characters', query: 'superhero', sourceId: 'colorful' },
+  { label: 'Music', query: 'music', sourceId: 'colorful' },
+];
 
 interface FindIconsDialogProps {
   open: boolean;
@@ -59,10 +82,15 @@ export function FindIconsDialog({ open, onClose, onSelect }: FindIconsDialogProp
   const titleId = useId();
   const searchId = useId();
   const [query, setQuery] = useState('');
+  const [sourceId, setSourceId] = useState<IconSourceId>(defaultIconSource.id);
   const [toast, setToast] = useState<{ id: number; message: string } | null>(null);
   const toastIdRef = useRef(0);
   const hideToast = useCallback(() => setToast(null), []);
-  const { status, icons, total, error, isDebouncing, retry } = useIconSearch(query);
+  const source = getIconSource(sourceId);
+  const { status, icons, total, error, isDebouncing, retry } = useIconSearch(
+    query,
+    source.provider,
+  );
 
   const trimmedQuery = query.trim();
   const hasQuery = trimmedQuery.length > 0;
@@ -101,6 +129,7 @@ export function FindIconsDialog({ open, onClose, onSelect }: FindIconsDialogProp
   useEffect(() => {
     if (!open) {
       setQuery('');
+      setSourceId(defaultIconSource.id);
       setToast(null);
     }
   }, [open]);
@@ -172,6 +201,42 @@ export function FindIconsDialog({ open, onClose, onSelect }: FindIconsDialogProp
             />
             {isWorking && <span className="search-spinner" aria-hidden="true" />}
           </div>
+          <div className="finder-filters">
+            <div className="filter-row" role="group" aria-label="Icon source">
+              <span className="filter-label">Source</span>
+              {iconSources.map((iconSource) => (
+                <button
+                  key={iconSource.id}
+                  type="button"
+                  className="filter-chip"
+                  title={iconSource.description}
+                  aria-pressed={iconSource.id === sourceId}
+                  onClick={() => setSourceId(iconSource.id)}
+                >
+                  {iconSource.label}
+                </button>
+              ))}
+            </div>
+            <div className="filter-row" role="group" aria-label="Icon categories">
+              <span className="filter-label">Browse</span>
+              {ICON_CATEGORIES.map((category) => (
+                <button
+                  key={category.label}
+                  type="button"
+                  className="filter-chip"
+                  aria-pressed={
+                    category.sourceId === sourceId && category.query === trimmedQuery
+                  }
+                  onClick={() => {
+                    setSourceId(category.sourceId);
+                    setQuery(category.query);
+                  }}
+                >
+                  {category.label}
+                </button>
+              ))}
+            </div>
+          </div>
           <p className="visually-hidden" role="status" aria-live="polite">
             {statusMessage}
           </p>
@@ -185,8 +250,8 @@ export function FindIconsDialog({ open, onClose, onSelect }: FindIconsDialogProp
               </span>
               <h3>What are you looking for?</h3>
               <p>
-                Search open icons by keyword. Each result shows its collection and license before
-                you add it.
+                Search {source.description} by keyword, or browse a category. Each result shows its
+                collection and license before you add it.
               </p>
               <div className="suggestion-row">
                 {SUGGESTED_TERMS.map((term) => (
@@ -284,7 +349,7 @@ export function FindIconsDialog({ open, onClose, onSelect }: FindIconsDialogProp
 
         <footer className="finder-footer">
           <span>
-            Icons come from{' '}
+            Icons come from OpenMoji, Microsoft Fluent Emoji, and other collections through{' '}
             <a href="https://iconify.design" target="_blank" rel="noreferrer">
               Iconify
             </a>

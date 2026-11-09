@@ -8,6 +8,18 @@ const PREVIEW_HEIGHT = 96;
 const PREVIEW_COLOR = '#e8ecf8';
 const PREVIEW_BATCH_CONCURRENCY = 4;
 
+export const COLORFUL_ICON_PREFIXES = [
+  'openmoji',
+  'fluent-emoji',
+  'fluent-emoji-flat',
+] as const;
+
+export interface IconifyProviderConfig {
+  id: string;
+  label: string;
+  prefixes?: readonly string[];
+}
+
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
@@ -230,53 +242,103 @@ export function parseIconifySearchResponse(payload: unknown): IconSearchResult {
   return { icons, total };
 }
 
-export const iconifyProvider: IconProvider = {
+export function buildIconifySearchUrl(
+  query: string,
+  prefixes: readonly string[] = [],
+): string {
+  const params = [
+    `query=${encodeURIComponent(query.trim())}`,
+    `limit=${SEARCH_LIMIT}`,
+  ];
+
+  if (prefixes.length > 0) {
+    params.push(`prefixes=${prefixes.map(encodeURIComponent).join(',')}`);
+  }
+
+  return `${ICONIFY_API_BASE}/search?${params.join('&')}`;
+}
+
+async function searchIconify(
+  query: string,
+  signal?: AbortSignal,
+  prefixes: readonly string[] = [],
+): Promise<IconSearchResult> {
+  const trimmedQuery = query.trim();
+  if (!trimmedQuery) {
+    return { icons: [], total: 0 };
+  }
+
+  const endpoint = buildIconifySearchUrl(trimmedQuery, prefixes);
+
+  let response: Response;
+  try {
+    response = await fetch(endpoint, {
+      signal,
+      headers: { Accept: 'application/json' },
+    });
+  } catch (error) {
+    if (isAbortError(error)) {
+      throw error;
+    }
+
+    throw new IconSearchError(
+      'Could not reach Iconify. Check your connection and try again.',
+      { cause: error },
+    );
+  }
+
+  if (!response.ok) {
+    throw new IconSearchError(
+      `Iconify search failed (${response.status}). Please try again in a moment.`,
+    );
+  }
+
+  let payload: unknown;
+  try {
+    payload = await response.json();
+  } catch (error) {
+    throw new IconSearchError('Iconify returned an unreadable response.', { cause: error });
+  }
+
+  const result = parseIconifySearchResponse(payload);
+
+  return {
+    ...result,
+    icons: await hydrateIconPreviews(result.icons, signal),
+  };
+}
+
+export function createIconifyProvider({
+  id,
+  label,
+  prefixes = [],
+}: IconifyProviderConfig): IconProvider {
+  return {
+    id,
+    label,
+    search: (query, signal) => searchIconify(query, signal, prefixes),
+  };
+}
+
+export const colorfulIconProvider = createIconifyProvider({
+  id: 'colorful',
+  label: 'Colorful',
+  prefixes: COLORFUL_ICON_PREFIXES,
+});
+
+export const openMojiProvider = createIconifyProvider({
+  id: 'openmoji',
+  label: 'OpenMoji',
+  prefixes: ['openmoji'],
+});
+
+export const fluentEmojiProvider = createIconifyProvider({
+  id: 'fluent',
+  label: 'Fluent Emoji',
+  prefixes: ['fluent-emoji', 'fluent-emoji-flat'],
+});
+
+export const iconifyProvider = createIconifyProvider({
   id: 'iconify',
   label: 'Iconify',
-
-  async search(query, signal) {
-    const trimmedQuery = query.trim();
-    if (!trimmedQuery) {
-      return { icons: [], total: 0 };
-    }
-
-    const endpoint = `${ICONIFY_API_BASE}/search?query=${encodeURIComponent(trimmedQuery)}&limit=${SEARCH_LIMIT}`;
-
-    let response: Response;
-    try {
-      response = await fetch(endpoint, {
-        signal,
-        headers: { Accept: 'application/json' },
-      });
-    } catch (error) {
-      if (isAbortError(error)) {
-        throw error;
-      }
-
-      throw new IconSearchError(
-        'Could not reach Iconify. Check your connection and try again.',
-        { cause: error },
-      );
-    }
-
-    if (!response.ok) {
-      throw new IconSearchError(
-        `Iconify search failed (${response.status}). Please try again in a moment.`,
-      );
-    }
-
-    let payload: unknown;
-    try {
-      payload = await response.json();
-    } catch (error) {
-      throw new IconSearchError('Iconify returned an unreadable response.', { cause: error });
-    }
-
-    const result = parseIconifySearchResponse(payload);
-
-    return {
-      ...result,
-      icons: await hydrateIconPreviews(result.icons, signal),
-    };
-  },
-};
+});

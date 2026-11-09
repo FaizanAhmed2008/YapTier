@@ -1002,6 +1002,61 @@ p {
   align-items: center;
 }
 
+.finder-filters {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.filter-row {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.filter-row::-webkit-scrollbar {
+  display: none;
+}
+
+.filter-label {
+  flex: none;
+  width: 42px;
+  color: var(--text-faint);
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.filter-chip {
+  flex: none;
+  height: 25px;
+  padding: 0 9px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #252525;
+  color: var(--text-muted);
+  font-size: 10.5px;
+  white-space: nowrap;
+}
+
+.filter-chip:hover {
+  border-color: var(--line-strong);
+  background: #303030;
+  color: var(--text);
+}
+
+.filter-chip[aria-pressed='true'] {
+  border-color: #e8e8e8;
+  background: #e8e8e8;
+  color: #191919;
+  font-weight: 700;
+}
+
 .search-icon {
   position: absolute;
   left: 12px;

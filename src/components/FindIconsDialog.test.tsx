@@ -1,5 +1,6 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { buildIconifySearchUrl } from '../lib/providers/iconify';
 import { FindIconsDialog } from './FindIconsDialog';
 
 const payload = {
@@ -60,6 +61,73 @@ function mockSearch(
 }
 
 describe('FindIconsDialog', () => {
+  it('searches colorful sources by default and switches source without clearing the query', async () => {
+    const fetchMock = mockSearch();
+
+    render(<FindIconsDialog open onClose={vi.fn()} onSelect={vi.fn()} />);
+
+    expect(screen.getByRole('button', { name: 'Colorful' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+
+    const searchInput = screen.getByRole('searchbox', { name: 'Search icons' });
+    fireEvent.change(searchInput, { target: { value: 'home' } });
+
+    await screen.findByRole(
+      'button',
+      { name: /add mdi:home icon from material design icons/i },
+      { timeout: 2500 },
+    );
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      buildIconifySearchUrl('home', ['openmoji', 'fluent-emoji', 'fluent-emoji-flat']),
+      expect.any(Object),
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'OpenMoji' }));
+
+    await waitFor(
+      () => {
+        expect(fetchMock).toHaveBeenCalledWith(
+          buildIconifySearchUrl('home', ['openmoji']),
+          expect.any(Object),
+        );
+      },
+      { timeout: 2500 },
+    );
+
+    expect(searchInput).toHaveValue('home');
+    expect(screen.getByRole('button', { name: 'OpenMoji' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+  });
+
+  it('browses categories using the matching icon source', async () => {
+    const fetchMock = mockSearch();
+
+    render(<FindIconsDialog open onClose={vi.fn()} onSelect={vi.fn()} />);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Brands' }));
+
+    expect(screen.getByRole('searchbox', { name: 'Search icons' })).toHaveValue('brand');
+    expect(screen.getByRole('button', { name: 'Iconify' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+
+    await waitFor(
+      () => {
+        expect(fetchMock).toHaveBeenCalledWith(
+          buildIconifySearchUrl('brand'),
+          expect.any(Object),
+        );
+      },
+      { timeout: 2500 },
+    );
+  });
+
   it('debounces searches, shows results, licenses, and selects an icon', async () => {
     const fetchMock = mockSearch();
     const onSelect = vi.fn();

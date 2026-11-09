@@ -1,8 +1,12 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   buildIconifyCssUrl,
+  buildIconifySearchUrl,
   buildIconifySvgUrl,
+  colorfulIconProvider,
+  fluentEmojiProvider,
   iconifyProvider,
+  openMojiProvider,
   parseIconifyCssPreviews,
   parseIconifySearchResponse,
 } from './iconify';
@@ -108,6 +112,20 @@ describe('buildIconifySvgUrl', () => {
   });
 });
 
+describe('buildIconifySearchUrl', () => {
+  it('builds an unscoped search URL', () => {
+    expect(buildIconifySearchUrl(' home ')).toBe(
+      'https://api.iconify.design/search?query=home&limit=72',
+    );
+  });
+
+  it('limits searches to the requested collection prefixes', () => {
+    expect(buildIconifySearchUrl('cat', ['openmoji', 'fluent-emoji'])).toBe(
+      'https://api.iconify.design/search?query=cat&limit=72&prefixes=openmoji,fluent-emoji',
+    );
+  });
+});
+
 describe('buildIconifyCssUrl', () => {
   it('builds a batch URL for a collection prefix', () => {
     expect(buildIconifyCssUrl('mdi', ['home', 'home-outline'])).toBe(
@@ -209,6 +227,27 @@ describe('iconifyProvider.search', () => {
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new TypeError('Failed to fetch')));
 
     await expect(iconifyProvider.search('home')).rejects.toThrow(/could not reach iconify/i);
+  });
+
+  it('scopes colorful source searches to their collections', async () => {
+    const fetchMock = mockIconify();
+
+    await colorfulIconProvider.search('cat');
+    await openMojiProvider.search('cat');
+    await fluentEmojiProvider.search('cat');
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      'https://api.iconify.design/search?query=cat&limit=72&prefixes=openmoji,fluent-emoji,fluent-emoji-flat',
+      expect.objectContaining({ headers: { Accept: 'application/json' } }),
+    );
+    expect(fetchMock).toHaveBeenCalledWith(
+      'https://api.iconify.design/search?query=cat&limit=72&prefixes=openmoji',
+      expect.objectContaining({ headers: { Accept: 'application/json' } }),
+    );
+    expect(fetchMock).toHaveBeenCalledWith(
+      'https://api.iconify.design/search?query=cat&limit=72&prefixes=fluent-emoji,fluent-emoji-flat',
+      expect.objectContaining({ headers: { Accept: 'application/json' } }),
+    );
   });
 
   it('returns an empty result for a blank query without calling the API', async () => {
