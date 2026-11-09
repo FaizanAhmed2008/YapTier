@@ -35,6 +35,16 @@ export function SearchGlyph({ className }: GlyphProps) {
   );
 }
 
+export function TextGlyph({ className }: GlyphProps) {
+  return (
+    <svg {...baseProps(className)}>
+      <path d="M5 6.5V5h14v1.5" />
+      <path d="M12 5v14" />
+      <path d="M9 19h6" />
+    </svg>
+  );
+}
+
 export function SparklesGlyph({ className }: GlyphProps) {
   return (
     <svg {...baseProps(className)}>

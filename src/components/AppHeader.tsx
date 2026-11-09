@@ -1,11 +1,12 @@
-import { SearchGlyph, UploadGlyph } from './Glyphs';
+import { SearchGlyph, TextGlyph, UploadGlyph } from './Glyphs';
 
 interface AppHeaderProps {
   onUpload: () => void;
+  onAddText: () => void;
   onFindIcons: () => void;
 }
 
-export function AppHeader({ onUpload, onFindIcons }: AppHeaderProps) {
+export function AppHeader({ onUpload, onAddText, onFindIcons }: AppHeaderProps) {
   return (
     <header className="app-header">
       <div className="brand">
@@ -22,6 +23,10 @@ export function AppHeader({ onUpload, onFindIcons }: AppHeaderProps) {
         <button type="button" className="button button-secondary" onClick={onUpload}>
           <UploadGlyph />
           Upload
+        </button>
+        <button type="button" className="button button-secondary" onClick={onAddText}>
+          <TextGlyph />
+          Add Text
         </button>
         <button type="button" className="button button-primary" onClick={onFindIcons}>
           <SearchGlyph />

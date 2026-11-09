@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react';
 import type { ChangeEvent } from 'react';
+import { AddTextDialog } from './components/AddTextDialog';
 import { AppHeader } from './components/AppHeader';
 import { FindIconsDialog } from './components/FindIconsDialog';
 import { TierEditor } from './components/TierEditor';
@@ -12,10 +13,12 @@ export default function App() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [rejections, setRejections] = useState<UploadRejection[]>([]);
   const [isFinderOpen, setIsFinderOpen] = useState(false);
+  const [isTextDialogOpen, setIsTextDialogOpen] = useState(false);
   const {
     board,
     addFiles,
     addIcon,
+    addText,
     moveItem,
     returnToCollection,
     removeImage,
@@ -33,6 +36,7 @@ export default function App() {
     <div className="app">
       <AppHeader
         onUpload={() => fileInputRef.current?.click()}
+        onAddText={() => setIsTextDialogOpen(true)}
         onFindIcons={() => setIsFinderOpen(true)}
       />
 
@@ -55,6 +59,12 @@ export default function App() {
         multiple
         onChange={handleFileChange}
         tabIndex={-1}
+      />
+
+      <AddTextDialog
+        open={isTextDialogOpen}
+        onClose={() => setIsTextDialogOpen(false)}
+        onAdd={addText}
       />
 
       <FindIconsDialog

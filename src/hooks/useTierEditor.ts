@@ -115,6 +115,32 @@ export function useTierEditor() {
     [commitBoard],
   );
 
+  const addText = useCallback(
+    (text: string): CollectionImage | null => {
+      const trimmed = text.trim();
+
+      if (!trimmed) {
+        return null;
+      }
+
+      const image: CollectionImage = {
+        id: createId('text'),
+        name: trimmed,
+        src: '',
+        source: 'text',
+        isObjectUrl: false,
+        text: trimmed,
+      };
+
+      commitBoard({
+        ...boardRef.current,
+        collection: [...boardRef.current.collection, image],
+      });
+      return image;
+    },
+    [commitBoard],
+  );
+
   const moveItem = useCallback(
     (activeId: string, overId: string) => {
       commitBoard(resolveDrop(boardRef.current, activeId, overId));
@@ -153,6 +179,7 @@ export function useTierEditor() {
     totalCount: getAllImages(board).length,
     addFiles,
     addIcon,
+    addText,
     moveItem,
     returnToCollection,
     removeImage,

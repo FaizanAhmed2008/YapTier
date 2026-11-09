@@ -20,7 +20,7 @@ export function CollectionBar({ images, isOver, onRemove }: CollectionBarProps) 
     <section
       ref={setNodeRef}
       className={`collection-bar${isOver ? ' is-over' : ''}`}
-      aria-label="Unranked images"
+      aria-label="Unranked items"
     >
       <div className="collection-label" aria-hidden="true">
         Unranked
@@ -31,7 +31,7 @@ export function CollectionBar({ images, isOver, onRemove }: CollectionBarProps) 
           strategy={horizontalListSortingStrategy}
         >
           {images.length === 0 ? (
-            <span className="collection-empty">No images yet</span>
+            <span className="collection-empty">No items yet</span>
           ) : (
             images.map((image) => (
               <ImageTile

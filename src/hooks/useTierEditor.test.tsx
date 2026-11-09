@@ -102,6 +102,55 @@ describe('useTierEditor', () => {
     expect(result.current.tiers.S).toHaveLength(0);
   });
 
+  it('adds text items that can move into tiers and be removed', () => {
+    const { result } = renderHook(() => useTierEditor());
+    let added: ReturnType<typeof result.current.addText> = null;
+
+    act(() => {
+      added = result.current.addText('  Rank me  ');
+    });
+
+    expect(added).toMatchObject({
+      name: 'Rank me',
+      src: '',
+      source: 'text',
+      isObjectUrl: false,
+      text: 'Rank me',
+    });
+    expect(result.current.collection).toHaveLength(1);
+
+    const id = result.current.collection[0].id;
+
+    act(() => {
+      result.current.moveItem(id, 'tier-A');
+    });
+
+    expect(result.current.collection).toHaveLength(0);
+    expect(result.current.tiers.A[0]).toMatchObject({
+      source: 'text',
+      text: 'Rank me',
+    });
+
+    act(() => {
+      result.current.removeImage(id);
+    });
+
+    expect(result.current.tiers.A).toHaveLength(0);
+    expect(result.current.totalCount).toBe(0);
+  });
+
+  it('ignores blank text items', () => {
+    const { result } = renderHook(() => useTierEditor());
+    let added: ReturnType<typeof result.current.addText> = null;
+
+    act(() => {
+      added = result.current.addText('   ');
+    });
+
+    expect(added).toBeNull();
+    expect(result.current.collection).toHaveLength(0);
+  });
+
   it('revokes upload URLs on permanent removal but not when returning to the collection', () => {
     const { result } = renderHook(() => useTierEditor());
     const png = new File(['png'], 'cat.png', { type: 'image/png' });

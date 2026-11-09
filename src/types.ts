@@ -1,4 +1,4 @@
-export type ImageSource = 'upload' | 'icon';
+export type ImageSource = 'upload' | 'icon' | 'text';
 
 export interface IconLicense {
   title: string;
@@ -30,6 +30,7 @@ export interface CollectionImage {
   source: ImageSource;
   isObjectUrl: boolean;
   icon?: IconImageData;
+  text?: string;
 }
 
 export interface UploadRejection {

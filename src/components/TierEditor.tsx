@@ -20,6 +20,7 @@ import { boardCollisionDetection } from '../lib/dndCollisions';
 import type { ContainerId, TierBoardState } from '../lib/board';
 import type { CollectionImage } from '../types';
 import { CollectionBar } from './CollectionBar';
+import { ItemPreview } from './ItemPreview';
 import { TierBoard } from './TierBoard';
 
 interface TierEditorProps {
@@ -31,8 +32,8 @@ interface TierEditorProps {
 
 function DragPreview({ image }: { image: CollectionImage }) {
   return (
-    <div className="drag-preview">
-      <img src={image.src} alt="" draggable={false} />
+    <div className={`drag-preview drag-preview-${image.source}`}>
+      <ItemPreview image={image} />
       <span className="visually-hidden">{image.name}</span>
     </div>
   );

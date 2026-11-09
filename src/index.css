@@ -236,6 +236,12 @@ p {
   transform: translateY(1px);
 }
 
+.button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
 .icon-button {
   display: inline-grid;
   place-items: center;
@@ -459,6 +465,27 @@ p {
   user-select: none;
 }
 
+.image-tile-text,
+.drag-preview-text {
+  background-image: none;
+}
+
+.tile-text {
+  display: -webkit-box;
+  width: 100%;
+  max-height: 100%;
+  padding: 2px;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  color: var(--text);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+  text-align: center;
+}
+
 .tile-fallback {
   display: grid;
   place-items: center;
@@ -577,6 +604,77 @@ p {
 .upload-notice-dismiss {
   flex: none;
   margin-left: auto;
+}
+
+.text-dialog {
+  width: min(360px, calc(100vw - 24px));
+  max-width: none;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+}
+
+.text-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.78);
+}
+
+.text-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 18px;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  background: #1e1e1e;
+}
+
+.text-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.text-header h2 {
+  margin: 0;
+  font-size: 17px;
+  letter-spacing: -0.02em;
+}
+
+.text-field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.text-input {
+  width: 100%;
+  height: 40px;
+  padding: 0 10px;
+  border: 1px solid var(--line-strong);
+  border-radius: 5px;
+  background: #121212;
+  color: var(--text);
+  font-size: 14px;
+}
+
+.text-input::placeholder {
+  color: var(--text-faint);
+}
+
+.text-input:focus {
+  border-color: #9a9a9a;
+  outline: none;
+}
+
+.text-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
 }
 
 .finder-dialog {
@@ -1057,6 +1155,11 @@ p {
 }
 
 @media (max-width: 420px) {
+  .app-header {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
   .brand-name {
     font-size: 17px;
   }
@@ -1066,6 +1169,7 @@ p {
   }
 
   .header-actions {
+    width: 100%;
     gap: 6px;
   }
 

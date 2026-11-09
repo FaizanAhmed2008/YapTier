@@ -1,9 +1,9 @@
-import { useState } from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import type { ContainerId } from '../lib/board';
 import type { CollectionImage } from '../types';
-import { CloseGlyph, ImageGlyph, TrashGlyph } from './Glyphs';
+import { CloseGlyph, TrashGlyph } from './Glyphs';
+import { ItemPreview } from './ItemPreview';
 
 type RemoveAction = 'delete' | 'return';
 
@@ -15,7 +15,6 @@ interface ImageTileProps {
 }
 
 export function ImageTile({ image, container, onRemove, removeAction }: ImageTileProps) {
-  const [previewFailed, setPreviewFailed] = useState(false);
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: image.id,
     data: { container, dropType: 'item' },
@@ -27,7 +26,7 @@ export function ImageTile({ image, container, onRemove, removeAction }: ImageTil
   return (
     <li
       ref={setNodeRef}
-      className={`image-tile${isDragging ? ' is-dragging' : ''}`}
+      className={`image-tile image-tile-${image.source}${isDragging ? ' is-dragging' : ''}`}
       style={{
         transform: CSS.Transform.toString(transform),
         transition,
@@ -42,19 +41,7 @@ export function ImageTile({ image, container, onRemove, removeAction }: ImageTil
         aria-label={image.name}
         title={image.name}
       >
-        {previewFailed ? (
-          <span className="tile-fallback">
-            <ImageGlyph />
-          </span>
-        ) : (
-          <img
-            src={image.src}
-            alt=""
-            loading="lazy"
-            draggable={false}
-            onError={() => setPreviewFailed(true)}
-          />
-        )}
+        <ItemPreview image={image} />
       </button>
       <button
         type="button"

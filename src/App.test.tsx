@@ -11,7 +11,7 @@ beforeEach(() => {
 
 describe('App image collection', () => {
   it('uploads an image, previews it, and removes it', async () => {
-    render(<App />);
+    const { container } = render(<App />);
 
     const input = screen.getByLabelText('Upload images');
     const file = new File(['png'], 'cat.png', { type: 'image/png' });
@@ -20,11 +20,38 @@ describe('App image collection', () => {
 
     expect(await screen.findByRole('button', { name: 'cat' })).toBeInTheDocument();
     expect(objectUrls.createObjectURL).toHaveBeenCalledWith(file);
+    expect(container.querySelector('.collection-strip img')).toHaveAttribute(
+      'src',
+      'blob:mock-1',
+    );
 
     fireEvent.click(screen.getByRole('button', { name: 'Remove cat' }));
 
     expect(screen.queryByRole('button', { name: 'cat' })).not.toBeInTheDocument();
     expect(objectUrls.revokeObjectURL).toHaveBeenCalledWith('blob:mock-1');
+  });
+
+  it('adds and removes custom text items', () => {
+    const { container } = render(<App />);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Add Text' }));
+
+    expect(screen.getByRole('heading', { name: 'Add Text' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Add' })).toBeDisabled();
+
+    fireEvent.change(screen.getByLabelText('Text'), {
+      target: { value: '  Must play  ' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Add' }));
+
+    expect(screen.getByRole('button', { name: 'Must play' })).toBeInTheDocument();
+    expect(container.querySelector('.image-tile-text .tile-text')).toHaveTextContent(
+      'Must play',
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'Remove Must play' }));
+
+    expect(screen.queryByRole('button', { name: 'Must play' })).not.toBeInTheDocument();
   });
 
   it('rejects invalid files and keeps valid ones', () => {
