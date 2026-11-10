@@ -406,7 +406,7 @@ p {
   width: auto;
   height: auto;
   max-height: 100%;
-  max-width: none;
+  max-width: 80%;
   object-fit: contain;
   object-position: center;
   border-radius: 4px;
@@ -435,8 +435,8 @@ p {
 .tier-dropzone .image-tile-icon .tile-drag img {
   width: auto;
   height: auto;
-  max-height: 100%;
-  max-width: none;
+  max-height: 85%;
+  max-width: 85%;
   object-fit: contain;
   object-position: center;
 }
@@ -550,7 +550,7 @@ p {
   width: auto;
   height: auto;
   max-height: 100%;
-  max-width: none;
+  max-width: 100%;
   object-fit: contain;
   object-position: center;
   border-radius: 4px;
@@ -580,7 +580,7 @@ p {
   width: auto;
   height: auto;
   max-height: 100%;
-  max-width: none;
+  max-width: 100%;
   object-fit: contain;
   object-position: center;
 }
@@ -656,7 +656,7 @@ p {
   width: auto;
   height: auto;
   max-height: 100%;
-  max-width: none;
+  max-width: 100%;
   object-fit: contain;
   object-position: center;
   pointer-events: none;
