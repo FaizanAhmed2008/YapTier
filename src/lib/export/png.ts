@@ -393,3 +393,4 @@ export async function copyPngToClipboard(blob: Blob): Promise<boolean> {
   }
   return false;
 }
+

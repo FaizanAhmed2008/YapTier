@@ -3,6 +3,7 @@ import { SortableContext, horizontalListSortingStrategy } from '@dnd-kit/sortabl
 import { tierContainerId } from '../lib/board';
 import type { TierId } from '../lib/board';
 import type { CollectionImage } from '../types';
+import { CogGlyph } from './Glyphs';
 import { ImageTile } from './ImageTile';
 
 interface TierRowProps {
@@ -10,9 +11,10 @@ interface TierRowProps {
   images: CollectionImage[];
   isOver: boolean;
   onReturn: (id: string) => void;
+  onConfigure?: () => void;
 }
 
-export function TierRow({ tier, images, isOver, onReturn }: TierRowProps) {
+export function TierRow({ tier, images, isOver, onReturn, onConfigure }: TierRowProps) {
   const { setNodeRef } = useDroppable({
     id: tierContainerId(tier),
     data: { dropType: 'container' },
@@ -20,8 +22,21 @@ export function TierRow({ tier, images, isOver, onReturn }: TierRowProps) {
 
   return (
     <div className="tier-row">
-      <div className={`tier-label tier-label-${tier.toLowerCase()}`} aria-hidden="true">
+      <div
+        className={`tier-label tier-label-${tier.toLowerCase()}`}
+        aria-hidden="true"
+      >
         {tier}
+        {onConfigure && (
+          <button
+            type="button"
+            className="tier-configure"
+            onClick={onConfigure}
+            aria-label={`Customize ${tier} tier`}
+          >
+            <CogGlyph />
+          </button>
+        )}
       </div>
       <div
         ref={setNodeRef}

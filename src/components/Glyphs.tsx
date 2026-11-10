@@ -103,3 +103,31 @@ export function CheckGlyph({ className }: GlyphProps) {
     </svg>
   );
 }
+
+export function UndoGlyph({ className }: GlyphProps) {
+  return (
+    <svg {...baseProps(className)}>
+      <path d="M20 13V9c0-4.4-3.6-8-8-8c-2.2 0-4.2 0.9-5.7 2.3L8 3" />
+      <path d="M16 13l-3 3l3 3" />
+    </svg>
+  );
+}
+
+export function RedoGlyph({ className }: GlyphProps) {
+  return (
+    <svg {...baseProps(className)}>
+      <path d="M4 13V9c0-4.4 3.6-8 8-8c2.2 0 4.2 0.9 5.7 2.3L16 3" />
+      <path d="M8 13l3 3l-3 3" />
+    </svg>
+  );
+}
+
+export function CogGlyph({ className }: GlyphProps) {
+  return (
+    <svg {...baseProps(className)} strokeWidth="2">
+      <circle cx="12" cy="12" r="5" />
+      <path d="M9.2 12l.7 1.3-1.3.7-1.3-.7-.7-1.3.7-1.3 1.3-.7 1.3.7z" />
+      <path d="M12 4.5v1.3M12 18.2v1.3M4.5 12h1.3M18.2 12h1.3M6.4 6.4l1.3 1.3M17.7 17.7l1.3 1.3M6.4 17.7l1.3-1.3M17.7 6.4l1.3-1.3" />
+    </svg>
+  );
+}

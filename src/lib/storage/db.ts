@@ -1,5 +1,5 @@
 import type { TierId } from '../board';
-import { createEmptyBoard, DEFAULT_TIER_CONFIGS, TIER_IDS } from '../board';
+import { DEFAULT_TIER_CONFIGS } from '../board';
 import type { CollectionImage, TierConfig } from '../../types';
 import type { TierBoardState } from '../board';
 
@@ -304,3 +304,4 @@ export async function clearBoardStorage(): Promise<void> {
     }
   }
 }
+

@@ -178,7 +178,6 @@ describe('board mutations', () => {
   });
 
   it('resets the board and sets custom titles', () => {
-    const board = withItems(['one'], { S: ['two'] });
     const reset = resetBoard('My Favorite Games');
 
     expect(reset.title).toBe('My Favorite Games');

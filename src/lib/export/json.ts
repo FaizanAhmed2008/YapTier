@@ -1,5 +1,5 @@
 import type { TierId } from '../board';
-import { createEmptyBoard, DEFAULT_TIER_CONFIGS, TIER_IDS } from '../board';
+import { DEFAULT_TIER_CONFIGS, TIER_IDS } from '../board';
 import { blobToDataUrl, dataUrlToBlob } from '../storage/db';
 import type { CollectionImage, TierConfig } from '../../types';
 import type { TierBoardState } from '../board';
@@ -247,3 +247,4 @@ export function importBoardFromJson(jsonString: string): ImportedBoardResult {
 
   return { board, createdObjectUrls };
 }
+

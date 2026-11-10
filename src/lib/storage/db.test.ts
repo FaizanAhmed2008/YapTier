@@ -69,3 +69,4 @@ describe('storage db utilities', () => {
     expect(afterClear).toBeNull();
   });
 });
+

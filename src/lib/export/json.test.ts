@@ -69,3 +69,4 @@ describe('JSON export and import', () => {
     expect(() => importBoardFromJson(JSON.stringify({ random: 123 }))).toThrow('Unsupported tier list format');
   });
 });
+
