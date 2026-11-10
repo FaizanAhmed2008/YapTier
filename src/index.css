@@ -24,6 +24,8 @@
   --danger: #ff9a9a;
   --focus: #f1f1f1;
   --radius: 6px;
+  --tier-row-height: 120px;
+  --collection-height: clamp(44px, 7vh, 56px);
   --collection-tile-size: clamp(48px, 6.8vh, 64px);
   --tier-tile-size: clamp(68px, 12.8vh, 118px);
   --tile-size: var(--collection-tile-size);
@@ -293,16 +295,13 @@ p {
 
 .app-main {
   display: flex;
-  flex: 1;
   flex-direction: column;
   gap: 6px;
   min-height: 0;
-  overflow: hidden;
 }
 
 .editor {
   display: flex;
-  flex: 1;
   flex-direction: column;
   gap: 4px;
   min-height: 0;
@@ -310,12 +309,12 @@ p {
 
 .tier-board {
   display: grid;
-  flex: 1;
-  grid-template-rows: repeat(5, minmax(0, 1fr));
+  grid-template-rows: repeat(5, var(--tier-row-height));
   gap: 1px;
-  min-height: 0;
+  width: 100%;
+  min-width: 0;
   padding: 1px;
-  overflow: hidden;
+  overflow: visible;
   border: 1px solid var(--separator);
   border-radius: var(--radius);
   background: var(--separator);
@@ -323,7 +322,8 @@ p {
 
 .tier-row {
   display: grid;
-  grid-template-columns: 44px minmax(0, 1fr);
+  grid-template-columns: 48px minmax(0, 1fr);
+  height: var(--tier-row-height);
   min-height: 0;
   overflow: hidden;
   background: var(--board-bg);
@@ -333,11 +333,12 @@ p {
   display: grid;
   place-items: center;
   min-height: 0;
+  height: 100%;
   border-right: 1px solid var(--separator);
   color: #171717;
-  font-size: 21px;
+  font-size: 20px;
   font-weight: 900;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.03em;
   line-height: 1;
   user-select: none;
 }
@@ -380,6 +381,7 @@ p {
 .tier-dropzone .image-tile {
   height: 100%;
   width: auto;
+  flex: 0 0 auto;
 }
 
 .tier-dropzone .image-tile-upload {
@@ -401,8 +403,9 @@ p {
 }
 
 .tier-dropzone .image-tile-upload .tile-drag img {
-  height: 100%;
   width: auto;
+  height: auto;
+  max-height: 100%;
   max-width: none;
   object-fit: contain;
   object-position: center;
@@ -412,7 +415,6 @@ p {
 .tier-dropzone .image-tile-icon {
   width: auto;
   height: 100%;
-  aspect-ratio: 1;
   border: 0;
   border-radius: 0;
   background: transparent;
@@ -420,7 +422,7 @@ p {
 }
 
 .tier-dropzone .image-tile-icon .tile-drag {
-  width: 100%;
+  width: auto;
   height: 100%;
   padding: 0;
   border: 0;
@@ -431,8 +433,10 @@ p {
 }
 
 .tier-dropzone .image-tile-icon .tile-drag img {
-  height: 100%;
-  width: 100%;
+  width: auto;
+  height: auto;
+  max-height: 100%;
+  max-width: none;
   object-fit: contain;
   object-position: center;
 }
@@ -447,6 +451,9 @@ p {
   background: #2a2a2a;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
   overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .tier-dropzone .image-tile-text .tile-drag {
@@ -480,8 +487,8 @@ p {
 .collection-bar {
   display: grid;
   flex: none;
-  grid-template-columns: 44px minmax(0, 1fr);
-  height: clamp(48px, 7vh, 60px);
+  grid-template-columns: 48px minmax(0, 1fr);
+  height: var(--collection-height);
   overflow: hidden;
   border: 1px solid var(--separator);
   border-radius: var(--radius);
@@ -540,8 +547,9 @@ p {
 }
 
 .collection-strip .image-tile-upload .tile-drag img {
-  height: 100%;
   width: auto;
+  height: auto;
+  max-height: 100%;
   max-width: none;
   object-fit: contain;
   object-position: center;
@@ -569,9 +577,12 @@ p {
 }
 
 .collection-strip .image-tile-icon .tile-drag img {
-  height: 100%;
-  width: 100%;
+  width: auto;
+  height: auto;
+  max-height: 100%;
+  max-width: none;
   object-fit: contain;
+  object-position: center;
 }
 
 .collection-strip .image-tile-text {
@@ -642,8 +653,10 @@ p {
 }
 
 .tile-drag img {
-  height: 100%;
   width: auto;
+  height: auto;
+  max-height: 100%;
+  max-width: none;
   object-fit: contain;
   object-position: center;
   pointer-events: none;
@@ -864,7 +877,8 @@ p {
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  padding: 4px 10px;
+  padding: 6px 10px;
+  border-top: 1px solid var(--separator);
   background: var(--app-bg);
 }
 
@@ -933,7 +947,7 @@ p {
   color: var(--text-muted);
   font-size: 11px;
   line-height: 1.4;
-  margin-top: auto;
+  margin-top: 14px;
 }
 
 .footer-content {
@@ -1605,6 +1619,8 @@ p {
   :root {
     --collection-tile-size: clamp(46px, 6.4vh, 58px);
     --tier-tile-size: clamp(52px, 11.8vh, 96px);
+    --tier-row-height: 96px;
+    --collection-height: clamp(44px, 6.8vh, 56px);
   }
 
   .app {

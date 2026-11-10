@@ -93,12 +93,12 @@ export function TierEditor({ board, onMove, onRemove, onReturn, children }: Tier
           overContainer={overContainer}
           onReturn={onReturn}
         />
-        {children}
         <CollectionBar
           images={board.collection}
           isOver={overContainer === COLLECTION_ID}
           onRemove={onRemove}
         />
+        {children}
       </div>
 
       <DragOverlay dropAnimation={{ duration: 160, easing: 'cubic-bezier(0.2, 0, 0, 1)' }}>
