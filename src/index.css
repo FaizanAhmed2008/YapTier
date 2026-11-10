@@ -404,9 +404,8 @@ p {
 
 .tier-dropzone .image-tile-upload .tile-drag img {
   width: auto;
-  height: auto;
-  max-height: 100%;
-  max-width: 80%;
+  height: 100%;
+  max-width: 100%;
   object-fit: contain;
   object-position: center;
   border-radius: 4px;
@@ -434,9 +433,8 @@ p {
 
 .tier-dropzone .image-tile-icon .tile-drag img {
   width: auto;
-  height: auto;
-  max-height: 85%;
-  max-width: 85%;
+  height: 100%;
+  max-width: 100%;
   object-fit: contain;
   object-position: center;
 }
@@ -548,8 +546,7 @@ p {
 
 .collection-strip .image-tile-upload .tile-drag img {
   width: auto;
-  height: auto;
-  max-height: 100%;
+  height: 100%;
   max-width: 100%;
   object-fit: contain;
   object-position: center;
@@ -578,8 +575,7 @@ p {
 
 .collection-strip .image-tile-icon .tile-drag img {
   width: auto;
-  height: auto;
-  max-height: 100%;
+  height: 100%;
   max-width: 100%;
   object-fit: contain;
   object-position: center;
@@ -654,8 +650,7 @@ p {
 
 .tile-drag img {
   width: auto;
-  height: auto;
-  max-height: 100%;
+  height: 100%;
   max-width: 100%;
   object-fit: contain;
   object-position: center;
