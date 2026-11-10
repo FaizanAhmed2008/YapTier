@@ -1,6 +1,5 @@
 import { useRef, useState } from 'react';
 import type { ChangeEvent } from 'react';
-import type { TierId } from './lib/board';
 import { AddTextDialog } from './components/AddTextDialog';
 import { AnnouncementBanner } from './components/AnnouncementBanner';
 import { AppFooter } from './components/AppFooter';
@@ -9,7 +8,6 @@ import { ConfirmDialog } from './components/ConfirmDialog';
 import { FindIconsDialog } from './components/FindIconsDialog';
 import { HowToUseDialog } from './components/HowToUseDialog';
 import { RedoGlyph, UndoGlyph } from './components/Glyphs';
-import { TierConfigDialog } from './components/TierConfigDialog';
 import { TierEditor } from './components/TierEditor';
 import { Toast } from './components/Toast';
 import { UploadNotice } from './components/UploadNotice';
@@ -24,6 +22,16 @@ import { exportBoardToJson, downloadJsonFile, importBoardFromJson } from './lib/
 import { FILE_INPUT_ACCEPT } from './lib/images';
 import type { UploadRejection } from './types';
 
+const SECONDARY_ACTIONS = [
+  { label: 'Save', key: 'save' },
+  { label: 'Load Saved', key: 'load' },
+  { label: 'Export PNG', key: 'export-png' },
+  { label: 'Share PNG', key: 'share-png' },
+  { label: 'Export JSON', key: 'export-json' },
+  { label: 'Import JSON', key: 'import-json' },
+  { label: 'How to Use', key: 'howto' },
+] as const;
+
 export default function App() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const jsonInputRef = useRef<HTMLInputElement>(null);
@@ -31,7 +39,7 @@ export default function App() {
   const [isFinderOpen, setIsFinderOpen] = useState(false);
   const [isTextDialogOpen, setIsTextDialogOpen] = useState(false);
   const [isHowToOpen, setIsHowToOpen] = useState(false);
-  const [configTier, setConfigTier] = useState<TierId | null>(null);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [confirm, setConfirm] = useState<{
     title: string;
     message: string;
@@ -42,7 +50,6 @@ export default function App() {
 
   const {
     board,
-    tierConfigs,
     totalCount,
     canUndo,
     canRedo,
@@ -54,7 +61,6 @@ export default function App() {
     moveItem,
     returnToCollection,
     removeImage,
-    updateTier,
     resetBoardAction,
     loadBoard,
     loadSavedSession,
@@ -157,6 +163,33 @@ export default function App() {
     }
   };
 
+  const handleMenuAction = (key: (typeof SECONDARY_ACTIONS)[number]['key']) => {
+    setIsMenuOpen(false);
+    switch (key) {
+      case 'save':
+        handleSave();
+        break;
+      case 'load':
+        handleLoadSaved();
+        break;
+      case 'export-png':
+        handleExportPng();
+        break;
+      case 'share-png':
+        handleSharePng();
+        break;
+      case 'export-json':
+        handleExportJson();
+        break;
+      case 'import-json':
+        jsonInputRef.current?.click();
+        break;
+      case 'howto':
+        setIsHowToOpen(true);
+        break;
+    }
+  };
+
   const handleConfirm = () => {
     if (confirm) {
       confirm.onConfirm();
@@ -172,11 +205,7 @@ export default function App() {
     <div className="app">
       <AnnouncementBanner />
 
-      <AppHeader
-        onUpload={() => fileInputRef.current?.click()}
-        onAddText={() => setIsTextDialogOpen(true)}
-        onFindIcons={() => setIsFinderOpen(true)}
-      />
+      <AppHeader />
 
       <main className="app-main">
         <UploadNotice rejections={rejections} onDismiss={() => setRejections([])} />
@@ -198,86 +227,50 @@ export default function App() {
             >
               New List
             </button>
-            <button
-              type="button"
-              className="button button-secondary"
-              onClick={handleSave}
-            >
-              Save
-            </button>
-            <button
-              type="button"
-              className="button button-secondary"
-              onClick={handleLoadSaved}
-            >
-              Load Saved
-            </button>
-            <button
-              type="button"
-              className="icon-button"
-              aria-label="Undo"
-              title="Undo (Ctrl+Z)"
-              disabled={!canUndo}
-              onClick={undo}
-            >
-              <UndoGlyph />
-            </button>
-            <button
-              type="button"
-              className="icon-button"
-              aria-label="Redo"
-              title="Redo (Ctrl+Shift+Z)"
-              disabled={!canRedo}
-              onClick={redo}
-            >
-              <RedoGlyph />
-            </button>
-          </div>
-
-          <div className="toolbar-group">
-            <button
-              type="button"
-              className="button button-secondary"
-              onClick={handleSharePng}
-            >
-              Share PNG
-            </button>
-            <button
-              type="button"
-              className="button button-secondary"
-              onClick={handleExportPng}
-            >
-              Export PNG
-            </button>
-            <button
-              type="button"
-              className="button button-secondary"
-              onClick={handleExportJson}
-            >
-              Export JSON
-            </button>
-            <label className="button button-secondary" style={{ display: 'flex', alignItems: 'center' }}>
-              Import JSON
-              <input
-                ref={jsonInputRef}
-                className="visually-hidden"
-                type="file"
-                accept=".json"
-                aria-label="Import tier list JSON"
-                onChange={handleJsonImport}
-                tabIndex={-1}
-              />
-            </label>
-            <button
-              type="button"
-              className="button button-secondary"
-              onClick={() => setIsHowToOpen(true)}
-            >
-              How to Use
-            </button>
           </div>
 
           <div className="toolbar-spacer" />
+
+          <div className="toolbar-group">
+            <div className="menu-button">
+              <button
+                type="button"
+                className="button button-secondary"
+                aria-haspopup="menu"
+                aria-expanded={isMenuOpen}
+                onClick={() => setIsMenuOpen((prev) => !prev)}
+              >
+                Menu
+                <svg
+                  width="10"
+                  height="10"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M6 9l6 6 6-6" />
+                </svg>
+              </button>
+              {isMenuOpen && (
+                <div className="menu-dropdown">
+                  {SECONDARY_ACTIONS.map((action) => (
+                    <button
+                      key={action.key}
+                      type="button"
+                      className="menu-item"
+                      onClick={() => handleMenuAction(action.key)}
+                    >
+                      {action.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
 
           <div className="toolbar-group toolbar-count">
             {totalCount} item{totalCount !== 1 ? 's' : ''}
@@ -289,8 +282,56 @@ export default function App() {
           onMove={moveItem}
           onRemove={removeImage}
           onReturn={returnToCollection}
-          onConfigure={(tier) => setConfigTier(tier)}
-        />
+        >
+          <section className="unranked-controls">
+            <div className="controls-left">
+              <button
+                type="button"
+                className="button button-secondary"
+                onClick={() => fileInputRef.current?.click()}
+              >
+                Upload
+              </button>
+              <button
+                type="button"
+                className="button button-secondary"
+                onClick={() => setIsTextDialogOpen(true)}
+              >
+                Add Text
+              </button>
+              <button
+                type="button"
+                className="button button-secondary"
+                onClick={() => setIsFinderOpen(true)}
+              >
+                Find Icons
+              </button>
+            </div>
+
+            <div className="controls-right">
+              <button
+                type="button"
+                className="icon-button"
+                aria-label="Undo"
+                title="Undo (Ctrl+Z)"
+                disabled={!canUndo}
+                onClick={undo}
+              >
+                <UndoGlyph />
+              </button>
+              <button
+                type="button"
+                className="icon-button"
+                aria-label="Redo"
+                title="Redo (Ctrl+Shift+Z)"
+                disabled={!canRedo}
+                onClick={redo}
+              >
+                <RedoGlyph />
+              </button>
+            </div>
+          </section>
+        </TierEditor>
       </main>
 
       <input
@@ -301,6 +342,16 @@ export default function App() {
         aria-label="Upload images"
         multiple
         onChange={handleFileChange}
+        tabIndex={-1}
+      />
+
+      <input
+        ref={jsonInputRef}
+        className="visually-hidden"
+        type="file"
+        accept=".json"
+        aria-label="Import tier list JSON"
+        onChange={handleJsonImport}
         tabIndex={-1}
       />
 
@@ -320,19 +371,6 @@ export default function App() {
         open={isHowToOpen}
         onClose={() => setIsHowToOpen(false)}
       />
-
-      {configTier && (
-        <TierConfigDialog
-          open
-          tier={configTier}
-          config={tierConfigs[configTier]}
-          onSave={(updates) => {
-            updateTier(configTier, updates);
-            setConfigTier(null);
-          }}
-          onClose={() => setConfigTier(null)}
-        />
-      )}
 
       <ConfirmDialog
         open={!!confirm}

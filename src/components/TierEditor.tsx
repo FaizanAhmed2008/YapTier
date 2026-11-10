@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import {
   DndContext,
   DragOverlay,
@@ -17,18 +17,17 @@ import {
   parseContainerId,
 } from '../lib/board';
 import { boardCollisionDetection } from '../lib/dndCollisions';
-import type { ContainerId, TierBoardState, TierId } from '../lib/board';
+import type { ContainerId, TierBoardState } from '../lib/board';
 import type { CollectionImage } from '../types';
 import { CollectionBar } from './CollectionBar';
 import { ItemPreview } from './ItemPreview';
 import { TierBoard } from './TierBoard';
-
 interface TierEditorProps {
   board: TierBoardState;
   onMove: (activeId: string, overId: string) => void;
   onRemove: (id: string) => void;
   onReturn: (id: string) => void;
-  onConfigure: (tier: TierId) => void;
+  children?: ReactNode;
 }
 
 function DragPreview({ image }: { image: CollectionImage }) {
@@ -40,13 +39,7 @@ function DragPreview({ image }: { image: CollectionImage }) {
   );
 }
 
-export function TierEditor({
-  board,
-  onMove,
-  onRemove,
-  onReturn,
-  onConfigure,
-}: TierEditorProps) {
+export function TierEditor({ board, onMove, onRemove, onReturn, children }: TierEditorProps) {
   const [activeId, setActiveId] = useState<string | null>(null);
   const [overContainer, setOverContainer] = useState<ContainerId | null>(null);
   const sensors = useSensors(
@@ -99,8 +92,8 @@ export function TierEditor({
           board={board}
           overContainer={overContainer}
           onReturn={onReturn}
-          onConfigure={onConfigure}
         />
+        {children}
         <CollectionBar
           images={board.collection}
           isOver={overContainer === COLLECTION_ID}

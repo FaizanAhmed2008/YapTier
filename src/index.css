@@ -47,13 +47,13 @@ html {
 body {
   min-width: 320px;
   margin: 0;
-  overflow: hidden;
+  overflow-y: auto;
   background: var(--app-bg);
   color: var(--text);
 }
 
 body:has(dialog[open]) {
-  overflow: hidden;
+  overflow-y: hidden;
 }
 
 button,
@@ -109,11 +109,9 @@ p {
   gap: 6px;
   width: 100%;
   max-width: 1440px;
-  height: 100vh;
-  height: 100dvh;
+  min-height: 100dvh;
   margin: 0 auto;
   padding: 8px 12px 10px;
-  overflow: hidden;
 }
 
 .app-header {
@@ -272,8 +270,7 @@ p {
   flex-wrap: wrap;
   align-items: center;
   gap: 6px;
-  padding: 6px 10px;
-  border-bottom: 1px solid var(--line);
+  padding: 4px 10px;
   background: var(--app-bg);
 }
 
@@ -307,7 +304,7 @@ p {
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
   min-height: 0;
 }
 
@@ -363,44 +360,6 @@ p {
 
 .tier-label-d {
   background: var(--tier-d);
-}
-
-.tier-label {
-  position: relative;
-}
-
-.tier-configure {
-  position: absolute;
-  top: 6px;
-  right: 6px;
-  width: 26px;
-  height: 26px;
-  padding: 0;
-  border: 1px solid var(--line-strong);
-  border-radius: 4px;
-  background: var(--surface);
-  color: var(--text-muted);
-  opacity: 0.6;
-  transition: opacity 120ms ease, background-color 120ms ease, color 120ms ease;
-}
-
-.tier-configure svg {
-  width: 12px;
-  height: 12px;
-}
-
-.tier-label:hover .tier-configure,
-.tier-configure:focus-visible {
-  opacity: 1;
-}
-
-.tier-configure:hover {
-  background: #383838;
-  color: var(--text);
-}
-
-.tier-configure:active {
-  transform: translateY(1px);
 }
 
 .tier-dropzone {
@@ -522,7 +481,7 @@ p {
   display: grid;
   flex: none;
   grid-template-columns: 44px minmax(0, 1fr);
-  height: clamp(64px, 8.4vh, 76px);
+  height: clamp(48px, 7vh, 60px);
   overflow: hidden;
   border: 1px solid var(--separator);
   border-radius: var(--radius);
@@ -547,10 +506,10 @@ p {
 .collection-strip {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
   min-width: 0;
   height: 100%;
-  padding: 4px 8px;
+  padding: 3px 6px;
   overflow-x: auto;
   overflow-y: hidden;
   overscroll-behavior-x: contain;
@@ -670,6 +629,16 @@ p {
 
 .tile-drag:active {
   cursor: grabbing;
+}
+
+.tile-drag.is-focused {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.tile-drag:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
 }
 
 .tile-drag img {
@@ -888,17 +857,83 @@ p {
   color: var(--text);
 }
 
+.unranked-controls {
+  display: flex;
+  flex: none;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 4px 10px;
+  background: var(--app-bg);
+}
+
+.controls-left {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.controls-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.menu-button {
+  position: relative;
+  display: inline-block;
+}
+
+.menu-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  min-width: 140px;
+  padding: 6px 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  z-index: 100;
+}
+
+.menu-item {
+  display: block;
+  width: 100%;
+  padding: 6px 14px;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  font-size: 12.5px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.menu-item:hover {
+  background: #383838;
+}
+
+.menu-item:focus {
+  outline: 2px solid var(--focus);
+  outline-offset: -2px;
+}
+
 .app-footer {
   display: flex;
   flex: none;
   flex-direction: column;
-  gap: 10px;
-  padding: 16px 12px;
+  gap: 6px;
+  padding: 10px 12px;
   border-top: 1px solid var(--line);
   background: var(--app-bg);
   color: var(--text-muted);
-  font-size: 12px;
-  line-height: 1.5;
+  font-size: 11px;
+  line-height: 1.4;
+  margin-top: auto;
 }
 
 .footer-content {
@@ -1641,7 +1676,7 @@ p {
   }
 
   .collection-bar {
-    height: clamp(56px, 8.2vh, 68px);
+    height: clamp(44px, 7vh, 56px);
   }
 
   .tile-remove {
@@ -1729,7 +1764,7 @@ p {
   }
 
   .collection-bar {
-    height: clamp(56px, 8vh, 68px);
+    height: clamp(48px, 7.5vh, 60px);
   }
 }
 

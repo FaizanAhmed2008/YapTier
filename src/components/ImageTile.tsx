@@ -12,9 +12,18 @@ interface ImageTileProps {
   container: ContainerId;
   onRemove: (id: string) => void;
   removeAction: RemoveAction;
+  dataIndex?: number;
+  isFocused?: boolean;
 }
 
-export function ImageTile({ image, container, onRemove, removeAction }: ImageTileProps) {
+export function ImageTile({
+  image,
+  container,
+  onRemove,
+  removeAction,
+  dataIndex,
+  isFocused,
+}: ImageTileProps) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: image.id,
     data: { container, dropType: 'item' },
@@ -35,7 +44,8 @@ export function ImageTile({ image, container, onRemove, removeAction }: ImageTil
     >
       <button
         type="button"
-        className="tile-drag"
+        className={`tile-drag${isFocused ? ' is-focused' : ''}`}
+        data-index={dataIndex ?? undefined}
         {...attributes}
         {...listeners}
         aria-label={image.name}
