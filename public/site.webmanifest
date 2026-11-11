@@ -1,0 +1,22 @@
+{
+  "name": "YapTier — Free Online Tier List Maker",
+  "short_name": "YapTier",
+  "description": "Create free tier lists in your browser with drag-and-drop S–D tiers, image uploads, icon search and PNG export. No sign-up, no ads, no tracking.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#1a1a1a",
+  "theme_color": "#08090f",
+  "icons": [
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

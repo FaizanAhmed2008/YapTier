@@ -2,17 +2,214 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#08090f" />
+
+    <title>Free Online Tier List Maker — No Sign-Up, No Ads | YapTier</title>
     <meta
       name="description"
-      content="YapTier — rank everything, yap about anything. Build tier lists with your own images and icons."
+      content="Create free gaming, anime, movie and music tier lists in your browser with drag-and-drop tiers, image uploads and PNG export. No sign-up, no ads, no tracking."
     />
-    <title>YapTier — Rank everything. Yap about anything.</title>
+    <link rel="canonical" href="https://yap-tier.vercel.app/" />
+    <meta
+      name="robots"
+      content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+    />
+    <meta name="application-name" content="YapTier" />
+    <meta name="theme-color" content="#08090f" />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="alternate" hreflang="en" href="https://yap-tier.vercel.app/" />
+    <link rel="alternate" hreflang="x-default" href="https://yap-tier.vercel.app/" />
+
+    <link rel="preconnect" href="https://api.iconify.design" crossorigin />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="YapTier" />
+    <meta property="og:title" content="YapTier — Free Online Tier List Maker" />
+    <meta
+      property="og:description"
+      content="Rank everything, yap about anything. Create free gaming, anime, movie and music tier lists with drag-and-drop tiers, your own images and open icons. No account, no ads, no tracking."
+    />
+    <meta property="og:url" content="https://yap-tier.vercel.app/" />
+    <meta property="og:image" content="https://yap-tier.vercel.app/og-image.png" />
+    <meta property="og:image:secure_url" content="https://yap-tier.vercel.app/og-image.png" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="YapTier tier list board with S, A, B, C and D tier rows"
+    />
+    <meta property="og:locale" content="en_US" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="YapTier — Free Online Tier List Maker" />
+    <meta
+      name="twitter:description"
+      content="Rank everything, yap about anything. Create free gaming, anime, movie and music tier lists with drag-and-drop tiers, your own images and open icons. No account, no ads, no tracking."
+    />
+    <meta name="twitter:image" content="https://yap-tier.vercel.app/og-image.png" />
+    <meta
+      name="twitter:image:alt"
+      content="YapTier tier list board with S, A, B, C and D tier rows"
+    />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Organization",
+            "@id": "https://yap-tier.vercel.app/#organization",
+            "name": "YapTier",
+            "url": "https://yap-tier.vercel.app/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://yap-tier.vercel.app/apple-touch-icon.png",
+              "width": 180,
+              "height": 180
+            },
+            "sameAs": ["https://github.com/FaizanAhmed2008/YapTier"]
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://yap-tier.vercel.app/#website",
+            "url": "https://yap-tier.vercel.app/",
+            "name": "YapTier",
+            "publisher": { "@id": "https://yap-tier.vercel.app/#organization" },
+            "inLanguage": "en"
+          },
+          {
+            "@type": "WebPage",
+            "@id": "https://yap-tier.vercel.app/#webpage",
+            "url": "https://yap-tier.vercel.app/",
+            "name": "Free Online Tier List Maker — No Sign-Up, No Ads | YapTier",
+            "description": "Create free gaming, anime, movie and music tier lists in your browser with drag-and-drop tiers, image uploads and PNG export. No sign-up, no ads, no tracking.",
+            "isPartOf": { "@id": "https://yap-tier.vercel.app/#website" },
+            "about": { "@id": "https://yap-tier.vercel.app/#webapp" },
+            "primaryImageOfPage": {
+              "@type": "ImageObject",
+              "url": "https://yap-tier.vercel.app/og-image.png",
+              "width": 1200,
+              "height": 630
+            },
+            "inLanguage": "en"
+          },
+          {
+            "@type": "WebApplication",
+            "@id": "https://yap-tier.vercel.app/#webapp",
+            "name": "YapTier",
+            "alternateName": "Yap Tier",
+            "url": "https://yap-tier.vercel.app/",
+            "description": "Free open-source online tier list maker. Drag and drop items into S, A, B, C and D tiers, upload images, search open icons, add text items and export as PNG or JSON. Works locally in your browser with no account, ads or tracking.",
+            "applicationCategory": "DesignApplication",
+            "operatingSystem": "Any (web browser)",
+            "browserRequirements": "Requires JavaScript",
+            "inLanguage": "en",
+            "isAccessibleForFree": true,
+            "screenshot": "https://yap-tier.vercel.app/og-image.png",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD"
+            },
+            "featureList": [
+              "Drag-and-drop tier lists with S, A, B, C and D tiers",
+              "Upload your own images (PNG, JPG, WebP)",
+              "Search and add open icons from OpenMoji, Fluent Emoji and Iconify collections",
+              "Add custom text items",
+              "Rename tiers and customize tier colors",
+              "Undo and redo changes",
+              "Export tier lists as PNG images or JSON files",
+              "Import tier lists from JSON",
+              "Auto-save in your browser — no sign-up required"
+            ],
+            "publisher": {
+              "@id": "https://yap-tier.vercel.app/#organization"
+            }
+          },
+          {
+            "@type": "FAQPage",
+            "@id": "https://yap-tier.vercel.app/#faq",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "Is YapTier free to use?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Yes. YapTier is a free, open-source tier list maker with no ads, no account and no tracking."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Do I need an account to create a tier list?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "No account is required. Your board is saved in your browser, so you can return to it later on the same device."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Can I export a tier list as an image?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Yes. Export your finished board as a PNG image at 2× scale, or save it as a JSON file so you can import and edit it later."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "What can I rank in a tier list?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "You can rank almost anything: games, anime, movies, music, food, sports teams, characters, products or your own custom categories."
+                }
+              }
+            ]
+          }
+        ]
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>
+    <noscript>
+      <main>
+        <h1>YapTier — Free Online Tier List Maker</h1>
+        <p>
+          YapTier is a free, open-source tier list maker that runs entirely in your
+          browser. Rank anything — games, movies, music, food, characters — by
+          dragging items into S, A, B, C and D tiers, then export your finished list
+          as a PNG image or JSON file.
+        </p>
+        <p>
+          Please enable JavaScript to build a tier list. YapTier needs JavaScript
+          because everything happens locally on your device: image uploads, icon
+          search, drag-and-drop ranking and auto-save. No account is required and no
+          data ever leaves your browser.
+        </p>
+        <h2>Features</h2>
+        <ul>
+          <li>Drag-and-drop tier lists with S, A, B, C and D tiers</li>
+          <li>Upload your own images (PNG, JPG, WebP)</li>
+          <li>Search thousands of open icons from OpenMoji, Fluent Emoji and Iconify</li>
+          <li>Add custom text items</li>
+          <li>Rename tiers and pick tier colors</li>
+          <li>Undo and redo every change</li>
+          <li>Export as PNG or JSON; import JSON tier lists</li>
+          <li>Auto-saved locally — no sign-up, no ads, no tracking</li>
+        </ul>
+        <h2>Popular tier list makers</h2>
+        <ul>
+          <li><a href="/gaming-tier-list-maker">Gaming tier list maker</a></li>
+          <li><a href="/anime-tier-list-maker">Anime tier list maker</a></li>
+          <li><a href="/movie-tier-list-maker">Movie tier list maker</a></li>
+          <li><a href="/music-tier-list-maker">Music tier list maker</a></li>
+          <li><a href="/how-to-make-a-tier-list">How to make a tier list</a></li>
+        </ul>
+      </main>
+    </noscript>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

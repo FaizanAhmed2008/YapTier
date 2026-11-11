@@ -41,6 +41,7 @@ export function ItemPreview({ image }: ItemPreviewProps) {
       src={image.src}
       alt=""
       loading="lazy"
+      decoding="async"
       draggable={false}
       onError={() => setFailed(true)}
     />

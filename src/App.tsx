@@ -6,6 +6,7 @@ import { AppFooter } from './components/AppFooter';
 import { AppHeader } from './components/AppHeader';
 import { ConfirmDialog } from './components/ConfirmDialog';
 import { FindIconsDialog } from './components/FindIconsDialog';
+import { HomeSeoContent } from './components/HomeSeoContent';
 import { RedoGlyph, UndoGlyph } from './components/Glyphs';
 import { TierEditor } from './components/TierEditor';
 import { Toast } from './components/Toast';
@@ -86,11 +87,15 @@ export default function App() {
 
   return (
     <div className="app">
+      <a className="skip-link" href="#main-content">
+        Skip to content
+      </a>
+
       <AnnouncementBanner />
 
       <AppHeader />
 
-      <main className="app-main">
+      <main id="main-content" className="app-main">
         <UploadNotice rejections={rejections} onDismiss={() => setRejections([])} />
 
         <section className="board-toolbar">
@@ -181,6 +186,8 @@ export default function App() {
             </div>
           </section>
         </TierEditor>
+
+        <HomeSeoContent />
       </main>
 
       <input
@@ -194,28 +201,34 @@ export default function App() {
         tabIndex={-1}
       />
 
-      <AddTextDialog
-        open={isTextDialogOpen}
-        onClose={() => setIsTextDialogOpen(false)}
-        onAdd={addText}
-      />
+      {isTextDialogOpen && (
+        <AddTextDialog
+          open={isTextDialogOpen}
+          onClose={() => setIsTextDialogOpen(false)}
+          onAdd={addText}
+        />
+      )}
 
-      <FindIconsDialog
-        open={isFinderOpen}
-        onClose={() => setIsFinderOpen(false)}
-        onSelect={addIcon}
-      />
+      {isFinderOpen && (
+        <FindIconsDialog
+          open={isFinderOpen}
+          onClose={() => setIsFinderOpen(false)}
+          onSelect={addIcon}
+        />
+      )}
 
-      <ConfirmDialog
-        open={!!confirm}
-        title={confirm?.title ?? ''}
-        message={confirm?.message ?? ''}
-        confirmLabel={confirm?.danger ? 'Delete everything' : 'Confirm'}
-        cancelLabel="Cancel"
-        danger={confirm?.danger ?? false}
-        onConfirm={handleConfirm}
-        onCancel={handleCancel}
-      />
+      {confirm && (
+        <ConfirmDialog
+          open
+          title={confirm.title}
+          message={confirm.message}
+          confirmLabel={confirm.danger ? 'Delete everything' : 'Confirm'}
+          cancelLabel="Cancel"
+          danger={confirm.danger}
+          onConfirm={handleConfirm}
+          onCancel={handleCancel}
+        />
+      )}
 
       <Toast message={toast} onDismiss={() => setToast(null)} />
 

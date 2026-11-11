@@ -95,6 +95,12 @@ src/
   hooks/useIconSearch.ts — Debounced icon search
   hooks/useDebouncedValue.ts
   components/         — UI components (dialogs, tiles, glyphs, etc.)
+seo/
+  pages.ts            — SEO page content and manifest
+  generate.ts         — Static pages, sitemap, robots and structured data
+public/
+  seo.css             — Styles for generated static pages
+  site.webmanifest    — Web app manifest
 ```
 
 ## Icon and image attribution
@@ -115,7 +121,7 @@ YapTier is [MIT licensed](LICENSE). Open-source, ad-free, and free to use.
 
 ## Deployment
 
-YapTier is a static site. Build it with `npm run build` and serve the `dist/` directory with any static host (GitHub Pages, Netlify, Vercel, Cloudflare Pages, nginx, etc.). A `Dockerfile` and nginx configuration with security headers and a health check are included for container deployments.
+YapTier is a static site. Build it with `npm run build` and serve the `dist/` directory with any static host (GitHub Pages, Netlify, Vercel, Cloudflare Pages, nginx, etc.). The build also generates static category and guide pages, `sitemap.xml`, `robots.txt` and a custom `404.html`. `vercel.json` enables clean URLs and production headers on Vercel. A `Dockerfile` and nginx configuration with security headers and a health check are included for container deployments.
 
 See the production build output with:
 

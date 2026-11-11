@@ -1,4 +1,4 @@
-import { useCallback, useRef } from 'react';
+import { memo, useCallback, useRef } from 'react';
 import { useDroppable } from '@dnd-kit/core';
 import { SortableContext, horizontalListSortingStrategy } from '@dnd-kit/sortable';
 import { COLLECTION_ID } from '../lib/board';
@@ -11,7 +11,7 @@ interface CollectionBarProps {
   onRemove: (id: string) => void;
 }
 
-export function CollectionBar({ images, isOver, onRemove }: CollectionBarProps) {
+export const CollectionBar = memo(function CollectionBar({ images, isOver, onRemove }: CollectionBarProps) {
   const { setNodeRef } = useDroppable({
     id: COLLECTION_ID,
     data: { dropType: 'container' },
@@ -84,4 +84,4 @@ export function CollectionBar({ images, isOver, onRemove }: CollectionBarProps) 
       </div>
     </section>
   );
-}
+});

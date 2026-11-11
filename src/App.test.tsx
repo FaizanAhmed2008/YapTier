@@ -57,6 +57,28 @@ afterEach(() => {
 });
 
 describe('App image collection', () => {
+  it('renders an accessible semantic structure with a single h1', () => {
+    const { container } = render(<App />);
+
+    const headings = container.querySelectorAll('h1');
+    expect(headings).toHaveLength(1);
+    expect(headings[0]).toHaveTextContent('YapTier');
+    expect(headings[0]).toHaveTextContent('Free Online Tier List Maker');
+
+    expect(container.querySelector('main#main-content')).toBeInTheDocument();
+    expect(container.querySelector('a.skip-link')).toHaveAttribute('href', '#main-content');
+
+    const seoContent = container.querySelector('.seo-content');
+    expect(seoContent).toBeInTheDocument();
+    expect(seoContent?.querySelector('h2')).toHaveTextContent('tier list maker');
+    expect(container.querySelectorAll('.seo-link-grid a').length).toBeGreaterThanOrEqual(5);
+
+    const footerNavs = container.querySelectorAll('footer nav');
+    expect(footerNavs.length).toBeGreaterThanOrEqual(2);
+    expect(container.querySelectorAll('footer a[href^="http"]').length).toBeGreaterThan(0);
+    expect(container.querySelector('footer a[href="/gaming-tier-list-maker"]')).toBeInTheDocument();
+  });
+
   it('uploads an image, previews it, and removes it', async () => {
     const { container } = render(<App />);
 

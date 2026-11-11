@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { useDroppable } from '@dnd-kit/core';
 import { SortableContext, horizontalListSortingStrategy } from '@dnd-kit/sortable';
 import { tierContainerId } from '../lib/board';
@@ -12,7 +13,7 @@ interface TierRowProps {
   onReturn: (id: string) => void;
 }
 
-export function TierRow({ tier, images, isOver, onReturn }: TierRowProps) {
+export const TierRow = memo(function TierRow({ tier, images, isOver, onReturn }: TierRowProps) {
   const { setNodeRef } = useDroppable({
     id: tierContainerId(tier),
     data: { dropType: 'container' },
@@ -49,4 +50,4 @@ export function TierRow({ tier, images, isOver, onReturn }: TierRowProps) {
       </div>
     </div>
   );
-}
+});

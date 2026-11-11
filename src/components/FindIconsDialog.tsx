@@ -63,6 +63,7 @@ function IconResultArt({ icon }: { icon: IconSummary }) {
           src={icon.previewUrl}
           alt=""
           loading="lazy"
+          decoding="async"
           width="34"
           height="34"
           onError={() => setFailed(true)}

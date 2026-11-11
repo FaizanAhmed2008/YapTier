@@ -7,9 +7,10 @@ export function AppHeader() {
           <span />
           <span />
         </span>
-        <p className="brand-name">
-          Yap<span>Tier</span>
-        </p>
+        <h1 className="brand-name">
+          Yap<span aria-hidden="true">Tier</span>
+          <span className="visually-hidden"> — Free Online Tier List Maker</span>
+        </h1>
       </div>
     </header>
   );
